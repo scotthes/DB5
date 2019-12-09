@@ -19,14 +19,13 @@ public class initialOptions extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 enterNewCentre();
-                dispose();
             }
         });
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         newPat.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                enterNewPatient();
+                editPatient();
             }
         });
         newGP.addActionListener(new ActionListener() {
@@ -45,9 +44,9 @@ public class initialOptions extends JFrame {
         frame.setVisible(true);
     }
 
-    private void enterNewPatient(){
+    private void editPatient(){
         dispose();
-        newPatient frame = new newPatient();
+        editPatient frame = new editPatient();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

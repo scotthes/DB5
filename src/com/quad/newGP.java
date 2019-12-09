@@ -10,6 +10,9 @@ public class newGP extends JFrame{
     private JTextField textField3;
     private JPanel GPPanel;
     private JButton OKButton;
+    private JTextField textField4;
+    private JTextField textField5;
+    private JTextField textField6;
 
     newGP(){
         setContentPane(GPPanel);
@@ -28,6 +31,9 @@ public class newGP extends JFrame{
         textField1.getText(); //Name
         textField2.getText(); //Email
         textField3.getText(); //Pager Number
+        textField4.getText(); //Med Centre
+        textField5.getText(); //ID
+        textField6.getText(); //Password
         //HENRY SAVE INFO
     }
 
