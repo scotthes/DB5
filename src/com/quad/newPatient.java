@@ -1,5 +1,8 @@
 package com.quad;
 
+import com.quad.ClientData.MedCentre;
+import com.quad.ClientData.Patient;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,17 +34,21 @@ public class newPatient extends JFrame {
         });
     }
 
-    private void saveInfo(){
-        textField1.getText(); //Name
-        textField2.getText(); //Email
+    private void saveInfo() {
+        String name =textField1.getText(); //Name
+        String email = textField2.getText(); //Email
         textField3.getText(); //ID
-        textField4.getText(); //Phone Num
-        textField5.getText(); //Address
-        comboBox1.getAccessibleContext(); //Med Centre
-        comboBox2.getAccessibleContext(); //Day OB
-        comboBox3.getAccessibleContext(); //Month OB
-        comboBox4.getAccessibleContext(); //Year OB
+        String phoneNum = textField4.getText(); //Phone Num
+        String address = textField5.getText(); //Address
+        //Need to sort out med centre stuff once got sql
+        MedCentre medC = new MedCentre((String) comboBox1.getSelectedItem(), "123 Fakestreet"); //Med Centre
+        String day = (String) comboBox2.getSelectedItem(); //Day OB
+        String month = (String) comboBox3.getSelectedItem(); //Month OB
+        String year = (String) comboBox4.getSelectedItem(); //Year OB
+        String bDay = year+" "+month+" "+day;
         //HENRY SAVE INFO
+        Patient pNew= new Patient(name, email, medC, 0, phoneNum, address, bDay);
+        //pNew.save();
     }
 
     private void goBack(){

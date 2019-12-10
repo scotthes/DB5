@@ -1,5 +1,7 @@
 package com.quad;
 
+import com.quad.ClientData.MedCentre;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +26,10 @@ public class newCentre extends JFrame{
     }
 
     private void saveInfo(){
+        String name = textField1.getText();
+        String address = textField2.getText();
+        MedCentre newMed = new MedCentre(name, address);
+        //newMed.save();
         //KAY SAVE THE INFO
     }
 

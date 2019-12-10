@@ -1,5 +1,8 @@
 package com.quad;
 
+import com.quad.ClientData.GP;
+import com.quad.ClientData.MedCentre;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,13 +31,15 @@ public class newGP extends JFrame{
     }
 
     private void saveInfo(){
-        textField1.getText(); //Name
-        textField2.getText(); //Email
-        textField3.getText(); //Pager Number
-        textField4.getText(); //Med Centre
-        textField5.getText(); //ID
-        textField6.getText(); //Password
+        String name = textField1.getText(); //Name
+        String email = textField2.getText(); //Email
+        String pagerNum = textField3.getText(); //Pager Number
+        MedCentre medC = new MedCentre(textField4.getText(), "123 Fakestreet"); //Med Centre
+        String id = textField5.getText(); //ID
+        String Password = textField6.getText(); //Password
         //HENRY SAVE INFO
+        GP newGP = new GP(name, email, medC, 0, pagerNum, id, Password);
+        // newGP.save();
     }
 
     private void goBack(){
