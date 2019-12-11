@@ -1,5 +1,7 @@
 package com.quad.ClientData;
 
+import com.quad.DataAccess;
+
 public class GP extends Person {
     int PagerNum;
     String UserName;
@@ -29,5 +31,22 @@ public class GP extends Person {
 
     public String getUserName() {
         return UserName;
+    }
+
+    public String getPassword(){
+        String str = String.valueOf(PasswordHash);
+        return str;
+    }
+
+    public void saveGP(){
+        String sqlStr = "";
+        if (this.ID == 0) {
+            sqlStr = "INSERT INTO public.gp (fullname, emailadd, medicalcentreid, pagernum, username, pswrd)" +
+                    "values ('" + this.getName() + "', '" + this.getEmail() + "', '" + this.getMedC().getID() + "', '" + this.getPagerNum() + "', '" + this.getUserName() + "', '" + this.getPassword() + "');";
+        }
+        else {
+            sqlStr = "";
+        }
+        DataAccess.save(sqlStr);
     }
 }

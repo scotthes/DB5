@@ -26,10 +26,10 @@ public class newCentre extends JFrame{
     }
 
     private void saveInfo(){
-        String name = textField1.getText();
-        String address = textField2.getText();
+        String name = textField2.getText();
+        String address = textField1.getText();
         MedCentre newMed = new MedCentre(name, address);
-        //newMed.save();
+        newMed.saveMC();
         //KAY SAVE THE INFO
     }
 

@@ -1,14 +1,16 @@
 package com.quad.ClientData;
 
+import com.quad.DataAccess;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Patient extends Person {
-    private int PhoneNum;
+    private String PhoneNum;
     private String Address;
-    private String DateOfBirth;
+    private Date DateOfBirth;
     private ArrayList<CaseReport> CaseReports;
     public Patient(String NameIn,
                    String EmailIn,
@@ -18,7 +20,7 @@ public class Patient extends Person {
                    String AddressIn,
                    String DateOBIn) {
         super(NameIn, EmailIn, MedCIn, IDIn);
-        PhoneNum = Integer.parseInt(PhoneNumIn);
+        PhoneNum = PhoneNumIn;
         Address = AddressIn;
         // date is converted into format that is more easily parsed into SQL Date type
         Date date = new Date();
@@ -28,15 +30,14 @@ public class Patient extends Person {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        sdf.applyPattern("yyyy-MM-dd");
-        DateOfBirth = sdf.format(date);
+        DateOfBirth = date;
     }
 
-    public int getPhoneNum() {
+    public String getPhoneNum() {
         return PhoneNum;
     }
 
-    public void setPhoneNum(int phoneNum) {
+    public void setPhoneNum(String phoneNum) {
         PhoneNum = phoneNum;
     }
 
@@ -49,7 +50,8 @@ public class Patient extends Person {
     }
 
     public String getDateOfBirth() {
-        return DateOfBirth;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(DateOfBirth);
     }
 
     public void addCase(String condition,
@@ -63,5 +65,17 @@ public class Patient extends Person {
 
     public int getCaseRSize() {
         return CaseReports.size();
+    }
+
+    public void savePatient(){
+        String sqlStr = "";
+        if (this.ID == 0){
+            sqlStr = "INSERT INTO public.patients (fullname, emailadd, medicalcentre, phonenumber, patientadd, dob) " +
+                    "values ('"+ this.getName() +"', '"+ this.getEmail() +"', '"+ this.getMedC().getID() +"','"+ this.getPhoneNum() +"','"+ this.getAddress() +"','"+ this.getDateOfBirth() +"');";
+        }
+        else {
+            sqlStr = "";
+        }
+        DataAccess.save(sqlStr);
     }
 }

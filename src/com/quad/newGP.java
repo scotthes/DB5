@@ -39,7 +39,7 @@ public class newGP extends JFrame{
         String Password = textField6.getText(); //Password
         //HENRY SAVE INFO
         GP newGP = new GP(name, email, medC, 0, pagerNum, id, Password);
-        // newGP.save();
+        newGP.saveGP();
     }
 
     private void goBack(){

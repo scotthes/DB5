@@ -48,7 +48,7 @@ public class newPatient extends JFrame {
         String bDay = year+" "+month+" "+day;
         //HENRY SAVE INFO
         Patient pNew= new Patient(name, email, medC, 0, phoneNum, address, bDay);
-        //pNew.save();
+        pNew.savePatient();
     }
 
     private void goBack(){
