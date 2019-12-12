@@ -12,6 +12,7 @@ public class initialOptions extends JFrame {
     private JButton newPat;
     private JButton newGP;
     private JLabel TitleLabel;
+    private JButton logOutButton;
 
     initialOptions() {
         setContentPane(optionsPanel);
@@ -34,6 +35,20 @@ public class initialOptions extends JFrame {
                 enterNewGP();
             }
         });
+        logOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                homePage();
+            }
+        });
+    }
+
+    private void homePage(){
+        dispose();
+        mainForm frame = new mainForm();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     private void enterNewCentre(){

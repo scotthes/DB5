@@ -13,21 +13,21 @@ public class mainForm extends JFrame {
     private JLabel TitleLabel;
     private JButton logInButton;
 
-    private mainForm() {
+    mainForm() {
         setContentPane(panel1);
         getRootPane().setDefaultButton(logInButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         logInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(!name.getText().equals("Admin")){
-                    JOptionPane.showMessageDialog(null, "Username Not Recognised");
+                if (name.getText().equals("Admin") && pwCorrect()) {
+                    grantAdminAccess();
                 }
-                else if(!pwCorrect()){
-                    JOptionPane.showMessageDialog(null, "Incorrect Password");
+                else if (name.getText().equals("JS2019") && pwCorrect()) {
+                    grantGPAccess();
                 }
-                else {
-                    grantAccess();
+                else{
+                    JOptionPane.showMessageDialog(null, "Sorry, those details are not recognised!");
                 }
             }
         });
@@ -46,9 +46,17 @@ public class mainForm extends JFrame {
         return accPw.equals(rightPw);
     }
 
-    private void grantAccess(){
+    private void grantAdminAccess(){
         dispose();
         initialOptions frame = new initialOptions();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    private void grantGPAccess(){
+        dispose();
+        optionsGP frame = new optionsGP();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
