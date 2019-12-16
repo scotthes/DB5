@@ -34,6 +34,7 @@ public class mainForm extends JFrame {
     }
 
     public static void main(String[] args){
+        System.out.println("THIS VERSION WAS USED IN PRESENTATION");
         mainForm frame = new mainForm();
         frame.pack();
         frame.setVisible(true);
