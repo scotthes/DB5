@@ -39,6 +39,8 @@ public class reportHome extends JFrame {
         patientSearch frame = new patientSearch();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -48,6 +50,8 @@ public class reportHome extends JFrame {
         newReport frame = new newReport();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -56,12 +60,16 @@ public class reportHome extends JFrame {
         reportExample frame = new reportExample();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
     public static void main(String[] args) {
         reportHome frame2 = new reportHome();
         frame2.pack();
+        frame2.setSize(700,400);
+        frame2.setLocationRelativeTo(null);
         frame2.setVisible(true);
         frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }

@@ -39,6 +39,8 @@ public class newCentre extends JFrame{
         initialOptions frame = new initialOptions();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -46,6 +48,8 @@ public class newCentre extends JFrame{
         newCentre frame3 = new newCentre();
         frame3.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame3.pack();
+        frame3.setSize(700,400);
+        frame3.setLocationRelativeTo(null);
         frame3.setVisible(true);
     }
 }

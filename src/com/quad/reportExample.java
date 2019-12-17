@@ -29,12 +29,16 @@ public class reportExample extends JFrame {
         reportHome frame = new reportHome();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         }
 
     public static void main(String[] args) {
         reportExample frame2 = new reportExample();
         frame2.pack();
+        frame2.setSize(700,400);
+        frame2.setLocationRelativeTo(null);
         frame2.setVisible(true);
         frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }

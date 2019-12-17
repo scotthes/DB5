@@ -1,19 +1,22 @@
 package com.quad;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class mainForm extends JFrame {
-    public JPanel panel1;
+    private JPanel panel1;
+    private JLabel iconLabel;
     private JTextField name;
-    private JLabel UserNameLabel;
-    private JLabel PasswordLabel;
     private JPasswordField pw;
-    private JLabel TitleLabel;
     private JButton logInButton;
 
+
     mainForm() {
+        //ImageIcon iconNHS = new ImageIcon("nhs.png");
+        //iconLabel.setIcon(iconNHS);
+        //iconLabel.setText(null);
         setContentPane(panel1);
         getRootPane().setDefaultButton(logInButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -37,6 +40,8 @@ public class mainForm extends JFrame {
         System.out.println("THIS VERSION WAS USED IN PRESENTATION");
         mainForm frame = new mainForm();
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -52,6 +57,8 @@ public class mainForm extends JFrame {
         initialOptions frame = new initialOptions();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -60,6 +67,8 @@ public class mainForm extends JFrame {
         optionsGP frame = new optionsGP();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }

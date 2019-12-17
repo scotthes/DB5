@@ -56,6 +56,8 @@ public class newPatient extends JFrame {
         editPatient frame = new editPatient();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -63,6 +65,8 @@ public class newPatient extends JFrame {
         newPatient frame5 = new newPatient();
         frame5.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame5.pack();
+        frame5.setSize(700,400);
+        frame5.setLocationRelativeTo(null);
         frame5.setVisible(true);
     }
 

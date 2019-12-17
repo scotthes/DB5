@@ -26,12 +26,16 @@ public class updatePatient extends JFrame {
         patientSearch frame = new patientSearch();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
     public static void main(String[] args) {
         optionsGP frame2 = new optionsGP();
         frame2.pack();
+        frame2.setSize(700,400);
+        frame2.setLocationRelativeTo(null);
         frame2.setVisible(true);
         frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }

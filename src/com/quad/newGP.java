@@ -46,6 +46,8 @@ public class newGP extends JFrame{
         initialOptions frame = new initialOptions();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -53,6 +55,8 @@ public class newGP extends JFrame{
         newGP frame5 = new newGP();
         frame5.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame5.pack();
+        frame5.setSize(700,400);
+        frame5.setLocationRelativeTo(null);
         frame5.setVisible(true);
     }
 }
