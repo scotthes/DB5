@@ -1,22 +1,30 @@
 package com.quad.ClientData;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Note {
-    private String Date;
-    private String Time;
+    private java.util.Date Date;
     private String Text;
-    public Note(String date,
-                String time,
-                String text){
+    private int CaseID;
+    public Note(Date date,
+                String text,
+                int caseID){
         Date = date;
-        Time = time;
         Text = text;
+        CaseID = caseID;
     }
 
-    public String getDate() {
+    public Date getDate(){
         return Date;
     }
-    public String getTime() {
-        return Time;
+
+    public String getDateString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(Date);
+    }
+    public int getCaseID() {
+        return CaseID;
     }
     public String getText() {
         return Text;

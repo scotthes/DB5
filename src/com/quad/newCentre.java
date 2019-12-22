@@ -28,8 +28,8 @@ public class newCentre extends JFrame{
     private void saveInfo(){
             String name = textField2.getText();
             String address = textField1.getText();
-            MedCentre newMed = new MedCentre(name, address);
-            newMed.saveMC();
+            MedCentre newMed = new MedCentre(name, address, 0);
+            newMed.save();
             //KAY SAVE THE INFO
 
     }

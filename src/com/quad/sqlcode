@@ -3,60 +3,29 @@ id SERIAL PRIMARY KEY,
 fullname varchar(128) NOT NULL,
 phonenumber varchar(64) NOT NULL,
 emailadd varchar (150) NOT NULL,
-medicalcentre varchar(150) NOT NULL,
+medicalcentre int NOT NULL,
 patientadd varchar(256) NOT NULL,
 dob date NOT NULL)
 
-select
-    p.dob,
-    p.emailadd,
-    p.fullname,
-    p."id",
-    p.medicalcentre,
-    p.patientadd,
-    p.phonenumber
-from
-    public.patients p;
-
-INSERT INTO public.patients (fullname, emailadd, medicalcentre, phonenumber, patientadd, dob)
-values ('john smit', 'john@smit.net', '12342', '07523543123', '123 fakestreet', '1974-03-12');
+DROP TABLE public.patients;
 
 CREATE TABLE public.gp(
 id SERIAL PRIMARY KEY,
 fullname varchar(128) NOT NULL,
 pagernum varchar(32) NOT NULL,
 emailadd varchar (128) NOT NULL,
-medicalcentreid varchar(32) NOT NULL,
+medicalcentreid int NOT NULL,
 username varchar(32) NOT NULL,
 pswrd varchar(32) NOT NULL
 )
 
-select
-    p.pagernum,
-    p.emailadd,
-    p.fullname,
-    p."id",
-    p.medicalcentreid,
-    p.username,
-    p.pswrd
-from
-    public.gp p;
-
-INSERT INTO public.gp (fullname, emailadd, medicalcentreid, pagernum, username, pswrd)
-values ('john smit', 'john@smit.net', '12342', '07523543123', 'Jsmitty', 'meatballs');
+DROP TABLE public.gp;
 
 CREATE TABLE public.medicalcentre(
 id SERIAL PRIMARY KEY,
 mcname varchar(256) NOT NULL,
 mcadd varchar(512) NOT NULL
 )
-
-select
-    p."id",
-    p.mcname,
-    p.mcadd
-from
-    public.medicalcentre p;
 
 INSERT INTO public.medicalcentre (mcname, mcadd)
 values ('Hammersmith', 'Somewhere in Hammersmith presumably');

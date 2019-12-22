@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class mainForm extends JFrame {
     private JPanel panel1;
@@ -23,14 +24,20 @@ public class mainForm extends JFrame {
         logInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (name.getText().equals("Admin") && pwCorrect()) {
+                if (name.getText().equals("Admin") && String.valueOf(pw.getPassword()).equals("pass")) {
                     grantAdminAccess();
                 }
-                else if (name.getText().equals("JS2019") && pwCorrect()) {
-                    grantGPAccess();
-                }
-                else{
-                    JOptionPane.showMessageDialog(null, "Sorry, those details are not recognised!");
+                else {
+                    try {
+                        if (DataAccess.GPLogin(name.getText(), String.valueOf(pw.getPassword()))) {
+                            grantGPAccess();
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(null, "Sorry, those details are not recognised!");
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -46,29 +53,32 @@ public class mainForm extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private boolean pwCorrect(){
+    private boolean pwCorrect(){ //not used
         String rightPw = "pass";
         String accPw = String.valueOf(pw.getPassword());
         return accPw.equals(rightPw);
     }
 
     private void grantAdminAccess(){
-        dispose();
         initialOptions frame = new initialOptions();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
+        frame.setLocation(this.getLocation());
+        //frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        this.dispose();
     }
 
     private void grantGPAccess(){
+        Point p = this.getLocation();
         dispose();
         optionsGP frame = new optionsGP();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
+        frame.setLocation(p);
+        //frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }

@@ -1,6 +1,7 @@
 package com.quad.ClientData;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CaseReport {
     private String Condition;
@@ -9,6 +10,7 @@ public class CaseReport {
     private int GPID;
     private int PatientID;
     private boolean IsChronic;
+    private int CaseID;
 
     public CaseReport(String condition,
                       int gpID,
@@ -17,6 +19,10 @@ public class CaseReport {
         GPID = gpID;
         PatientID = patientID;
         IsChronic = false; // defaults to not chronic, can be changed with button in UI
+    }
+
+    public int getCaseID() {
+        return CaseID;
     }
 
     public String getCondition() {
@@ -43,10 +49,10 @@ public class CaseReport {
         IsChronic = chronic;
     }
 
-    public void addNote(String date,
+    public void addNote(Date date,
                         String time,
                         String text){
-        Note note = new Note(date, time, text);
+        Note note = new Note(date, time, this.getCaseID());
         Notes.add(note);
     }
     public Note getNote(int index){
@@ -58,10 +64,10 @@ public class CaseReport {
     }
 
     public void addMed(String name,
-                             String startDate,
-                             String duration,
+                             Date startDate,
+                             int duration,
                              String usageNotes){
-        Medication med = new Medication(name, startDate, duration, usageNotes);
+        Medication med = new Medication(name, startDate, duration, usageNotes, this.getCaseID());
         Medications.add(med);
     }
     public Medication getMed(int index){

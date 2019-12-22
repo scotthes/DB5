@@ -1,33 +1,48 @@
 package com.quad.ClientData;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Medication {
     private String Name;
-    private String StartDate;
-    private String Duration;
+    private Date StartDate;
+    private int Duration;
     private String UsageNotes;
+    private int CaseID;
     public Medication(String name,
-                      String startDate,
-                      String duration,
-                      String usageNotes){
+                      Date startDate,
+                      int duration,
+                      String usageNotes,
+                      int caseID){
         Name = name;
         StartDate = startDate;
         Duration = duration;
         UsageNotes = usageNotes;
+        CaseID = caseID;
     }
 
     public String getName() {
         return Name;
     }
 
-    public String getStartDate() {
+    public Date getStartDate(){
         return StartDate;
     }
 
-    public String getDuration() {
+    public String getStartDateString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(StartDate);
+    }
+
+    public int getDuration() {
         return Duration;
     }
 
     public String getUsageNotes() {
         return UsageNotes;
+    }
+
+    public int getCaseID(){
+        return CaseID;
     }
 }

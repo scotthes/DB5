@@ -2,6 +2,8 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
+import java.sql.SQLException;
+
 public class GP extends Person {
     String PagerNum;
     String UserName;
@@ -38,15 +40,13 @@ public class GP extends Person {
         return str;
     }
 
-    public void saveGP(){
-        String sqlStr = "";
-        if (this.ID == 0) {
-            sqlStr = "INSERT INTO public.gp (fullname, emailadd, medicalcentreid, pagernum, username, pswrd)" +
-                    "values ('" + this.getName() + "', '" + this.getEmail() + "', '" + this.getMedC().getID() + "', '" + this.getPagerNum() + "', '" + this.getUserName() + "', '" + this.getPassword() + "');";
+    public void save(){
+        if (this.ID == 0){
+            try {
+                DataAccess.saveGP(this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        else {
-            sqlStr = "";
-        }
-        DataAccess.save(sqlStr);
     }
 }

@@ -2,6 +2,8 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,7 +51,11 @@ public class Patient extends Person {
         Address = address;
     }
 
-    public String getDateOfBirth() {
+    public Date getDOBDate(){
+        return DateOfBirth;
+    }
+
+    public String getDOBString() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(DateOfBirth);
     }
@@ -67,15 +73,57 @@ public class Patient extends Person {
         return CaseReports.size();
     }
 
-    public void savePatient(){
-        String sqlStr = "";
+    public void save(){
         if (this.ID == 0){
-            sqlStr = "INSERT INTO public.patients (fullname, emailadd, medicalcentre, phonenumber, patientadd, dob) " +
-                    "values ('"+ this.getName() +"', '"+ this.getEmail() +"', '"+ this.getMedC().getID() +"','"+ this.getPhoneNum() +"','"+ this.getAddress() +"','"+ this.getDateOfBirth() +"');";
+            try {
+                DataAccess.savePatient(this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        else {
-            sqlStr = "";
-        }
-        DataAccess.save(sqlStr);
     }
+
+
+
+    public ArrayList<Patient> searchPatient(int pageNo){
+        ResultSet rs = null;
+        try {
+            rs = DataAccess.searchPatient(this, pageNo);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Patient> results = new ArrayList<>();
+        try {
+            while (rs.next()) {
+                String nameIn = rs.getString("fullname");
+                String emailIn = rs.getString("emailadd");
+                int idIn = rs.getInt(1);
+                String phoneIn = rs.getString("phonenumber");
+                String addressIn = rs.getString("patientadd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMMMM dd");
+                String DOBin = sdf.format(rs.getDate("dob"));
+                int mcid = rs.getInt(8);
+                String mcName = rs.getString("mcname");
+                String mcAdd = rs.getString("mcadd");
+                MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
+                Patient pRes = new Patient(nameIn, emailIn, MedCIn, idIn, phoneIn, addressIn, DOBin);
+                results.add(pRes);
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
+    public int searchCount() {
+        int count = 0;
+        try {
+            ResultSet rs = DataAccess.searchPatientCount(this);
+            Boolean k = rs.next();
+            count = rs.getInt("count");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
 }

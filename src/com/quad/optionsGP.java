@@ -1,8 +1,11 @@
 package com.quad;
 
+import com.quad.ClientData.Patient;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class optionsGP extends JFrame {
 
@@ -22,6 +25,7 @@ public class optionsGP extends JFrame {
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                /*
                 if(!textField1.getText().equals("John Smith") ){
                     JOptionPane.showMessageDialog(null, "Sorry, that name is not recognised!");
                 }
@@ -30,6 +34,22 @@ public class optionsGP extends JFrame {
                 }
                 else {
                     search();
+                }
+                 */
+                String name = textField1.getText();
+                String address = textField3.getText();
+                String day = (String) comboBox2.getSelectedItem(); //Day OB
+                String month = (String) comboBox3.getSelectedItem(); //Month OB
+                String year = (String) comboBox1.getSelectedItem(); //Year OB
+                String bDay = year+" "+month+" "+day;
+                Patient pSearch = new Patient(name, null, null, 0, null, address, bDay);
+                int resultCount = pSearch.searchCount();
+                ArrayList<Patient> results = pSearch.searchPatient(0);
+
+                System.out.println(resultCount);
+                for (int i = 0; i< results.size(); i++){
+                    System.out.println(results.get(i).getID()+results.get(i).getName()+results.get(i).getPhoneNum()+results.get(i).getEmail()+results.get(i).getAddress()+
+                            results.get(i).getDOBString()+results.get(i).getMedC().getID()+results.get(i).getMedC().getName()+results.get(i).getMedC().getAddress());
                 }
             }
         });

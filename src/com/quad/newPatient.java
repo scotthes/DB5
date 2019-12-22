@@ -40,15 +40,22 @@ public class newPatient extends JFrame {
         textField3.getText(); //ID
         String phoneNum = textField4.getText(); //Phone Num
         String address = textField5.getText(); //Address
-        //Need to sort out med centre stuff once got sql
-        MedCentre medC = new MedCentre((String) comboBox1.getSelectedItem(), "123 Fakestreet"); //Med Centre
+
         String day = (String) comboBox2.getSelectedItem(); //Day OB
         String month = (String) comboBox3.getSelectedItem(); //Month OB
         String year = (String) comboBox4.getSelectedItem(); //Year OB
         String bDay = year+" "+month+" "+day;
-        //HENRY SAVE INFO
-        Patient pNew= new Patient(name, email, medC, 0, phoneNum, address, bDay);
-        pNew.savePatient();
+        MedCentre medC = new MedCentre((String) comboBox1.getSelectedItem(), "", 0); //Med Centre
+        medC = medC.search();
+        if (medC.getID()==0){
+            //ERROR NO MED CENTRE FOUND W/E
+        }
+        else{
+            Patient pNew= new Patient(name, email, medC, 0, phoneNum, address, bDay);
+            pNew.save();
+            //only saves the patient if a valid medical centre was entered
+        }
+
     }
 
     private void goBack(){

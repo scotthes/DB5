@@ -11,18 +11,9 @@ public abstract class Person {
                   int IDIn){
         Name = NameIn;
         Email = EmailIn;
-        MedC = MedCIn;
-        // if an id exists already (aka importing person from database), then
-        // sets the id to the imported one, otherwise if no id exists (aka
-        // adding a new person) then creates a new one
-        /*
-        if (IDIn == 0){
-            ID = EmailIn.hashCode();
-            // uses email to generate unique ID as email addresses are unique
+        if (MedCIn != null) {
+            MedC = MedCIn;
         }
-        else {
-            ID = IDIn;
-        }*/
         ID = IDIn;
     }
 
@@ -50,7 +41,7 @@ public abstract class Person {
         MedC = medC;
     }
 
-    public long getID() {
+    public int getID() {
         return ID;
     }
 }

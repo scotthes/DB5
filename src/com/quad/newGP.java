@@ -34,11 +34,19 @@ public class newGP extends JFrame{
         String name = textField1.getText(); //Name
         String email = textField2.getText(); //Email
         String pagerNum = textField3.getText(); //Pager Number
-        MedCentre medC = new MedCentre(textField4.getText(), "123 Fakestreet"); //Med Centre
-        String id = textField5.getText(); //ID
+        String username = textField5.getText(); //Username
         String Password = textField6.getText(); //Password
-        GP newGP = new GP(name, email, medC, 0, pagerNum, id, Password);
-        newGP.saveGP();
+        MedCentre medC = new MedCentre(textField4.getText(), "", 0); //Med Centre
+        medC = medC.search();
+        if (medC.getID()==0){
+            //ERROR NO MED CENTRE FOUND W/E
+        }
+        else{
+            GP newGP = new GP(name, email, medC, 0, pagerNum, username, Password);
+            newGP.save();
+            //only saves the gp if valid medical centre entered
+        }
+
     }
 
     private void goBack(){
