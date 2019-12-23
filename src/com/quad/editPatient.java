@@ -26,17 +26,18 @@ public class editPatient extends JFrame {
         setContentPane(newPatientPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        int id = currentPatient.getID();
 
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                saveInfo();
+                saveInfo(id);
                 goBack();
             }
         });
     }
 
-    private void saveInfo() {
+    private void saveInfo(int id) {
         String name = nameField.getText(); //Name
         String email = emailField.getText(); //Email
         idField.getText(); //ID
@@ -52,7 +53,7 @@ public class editPatient extends JFrame {
             JOptionPane.showMessageDialog(null, "Sorry, there is no medical centre with that name!");//ERROR NO MED CENTRE FOUND W/E
         }
         else{
-            Patient pNew= new Patient(name, email, medC, 0, phoneNum, address, bDay);
+            Patient pNew= new Patient(name, email, medC, id, phoneNum, address, bDay);
             pNew.save();
             //only saves the patient if a valid medical centre was entered
         }

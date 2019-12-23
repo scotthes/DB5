@@ -81,9 +81,14 @@ public class Patient extends Person {
                 e.printStackTrace();
             }
         }
+        else {
+            try {
+                DataAccess.updatePatient(this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
-
-
 
     public ArrayList<Patient> searchPatient(int pageNo){
         ResultSet rs = null;

@@ -17,7 +17,6 @@ public class patientSearch extends JFrame {
     private JComboBox comboBox1;
     private JComboBox comboBox2;
     private JComboBox comboBox3;
-    private ArrayList<String> namesResults= new ArrayList<>();
 
     patientSearch(int type){
         setContentPane(optionsGPPanel);
@@ -55,28 +54,13 @@ public class patientSearch extends JFrame {
         String year = (String) comboBox1.getSelectedItem(); //Year OB
         String bDay = year+" "+month+" "+day;
         Patient pSearch = new Patient(name, null, null, 0, null, address, bDay);
-        int resultCount = pSearch.searchCount();
-        ArrayList<Patient> results = pSearch.searchPatient(0);
-
-        System.out.println(resultCount);
-        for (Patient result : results) {
-            namesResults.add(result.getName() + " ----- " + result.getEmail());
-            System.out.println(result.getID() + result.getName() + result.getPhoneNum() + result.getEmail() + result.getAddress() +
-                    result.getDOBString() + result.getMedC().getID() + result.getMedC().getName() + result.getMedC().getAddress());
-        }
-
-        if(resultCount == 0){
-            JOptionPane.showMessageDialog(null, "Sorry, no patient with those details can be found!");
-        }
-        else {
-            dispose();
-            patientSearchResults frame = new patientSearchResults(results,resultCount, namesResults, type);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-            frame.setSize(700, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        }
+        dispose();
+        patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     public static void main(String[] args) {
