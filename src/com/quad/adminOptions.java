@@ -74,7 +74,7 @@ public class adminOptions extends JFrame {
 
     private void newPatient(){
         dispose();
-        Patient nullPatient = new Patient(" "," ",null,0," "," ",null);
+        Patient nullPatient = new Patient(" "," ",null,0," "," "," ");
         editPatient frame = new editPatient(nullPatient);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();

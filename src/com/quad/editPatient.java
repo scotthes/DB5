@@ -84,7 +84,7 @@ public class editPatient extends JFrame {
         if(!currentPatient.getEmail().equals(" ")){
             emailField.setText(currentPatient.getEmail());
         }
-        if(currentPatient.getID() !=0){
+        if(currentPatient.getID() != 0){
             idField.setText(String.valueOf(currentPatient.getID()));
         }
         if(!currentPatient.getAddress().equals(" ")){
@@ -98,7 +98,7 @@ public class editPatient extends JFrame {
     }
 
     public static void main(String[] args) {
-        editPatient frame = new editPatient(new Patient(null,null,null,0,null,null,null));
+        editPatient frame = new editPatient(new Patient(" "," ",null,0," "," "," "));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
