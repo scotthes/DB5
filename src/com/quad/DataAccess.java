@@ -17,7 +17,7 @@ public class DataAccess {
     public static Connection connect(){
         String url = "jdbc:postgresql://localhost:5432/postgres"; // change to web url when server set up
         String user = "postgres";
-        String password = "easyentry"; // change to whatever postgres password is
+        String password = "pass"; // change to whatever postgres password is
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, user, password);
@@ -224,7 +224,7 @@ public class DataAccess {
     public static void saveMedC(@NotNull MedCentre input) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "INSERT INTO medicalcentre " +
-                "(medicalcentrename, medicalcentreadd) " +
+                "(mcname, mcadd) " +
                 "VALUES (?,?);";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,input.getName());

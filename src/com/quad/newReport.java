@@ -12,26 +12,16 @@ public class newReport extends JFrame{
     private JButton OKButton;
     private JPanel newReportPanel;
 
-    newReport() {
+    private newReport() {
         setContentPane(newReportPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                returnBack();
+
             }
         });
-    }
-
-    private void returnBack(){
-        dispose();
-        reportHome frame = new reportHome();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     public static void main(String[] args) {

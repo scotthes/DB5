@@ -51,7 +51,7 @@ public class newGP extends JFrame{
 
     private void goBack(){
         dispose();
-        initialOptions frame = new initialOptions();
+        adminOptions frame = new adminOptions();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);

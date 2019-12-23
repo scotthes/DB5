@@ -60,7 +60,7 @@ public class mainForm extends JFrame {
     }
 
     private void grantAdminAccess(){
-        initialOptions frame = new initialOptions();
+        adminOptions frame = new adminOptions();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
@@ -73,7 +73,7 @@ public class mainForm extends JFrame {
     private void grantGPAccess(){
         Point p = this.getLocation();
         dispose();
-        optionsGP frame = new optionsGP();
+        patientSearch frame = new patientSearch(0);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);

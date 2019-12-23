@@ -1,11 +1,13 @@
 package com.quad;
 
+import com.quad.ClientData.Patient;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 //Define initialOptions class as an extension of JFrame
-public class initialOptions extends JFrame {
+public class adminOptions extends JFrame {
     //IntelliJ automatically instantiates the below
     private JButton newCentre;
     private JPanel optionsPanel;
@@ -13,8 +15,9 @@ public class initialOptions extends JFrame {
     private JButton newGP;
     private JLabel TitleLabel;
     private JButton logOutButton;
+    private JButton exPat;
 
-    initialOptions() {
+    adminOptions() {
         setContentPane(optionsPanel);
         newCentre.addActionListener(new ActionListener() {
             @Override
@@ -26,7 +29,13 @@ public class initialOptions extends JFrame {
         newPat.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                editPatient();
+                newPatient();
+            }
+        });
+        exPat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                exPatient();
             }
         });
         newGP.addActionListener(new ActionListener() {
@@ -63,9 +72,20 @@ public class initialOptions extends JFrame {
         frame.setVisible(true);
     }
 
-    private void editPatient(){
+    private void newPatient(){
         dispose();
-        editPatient frame = new editPatient();
+        Patient nullPatient = new Patient(" "," ",null,0," "," ",null);
+        editPatient frame = new editPatient(nullPatient);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private void exPatient(){
+        dispose();
+        patientSearch frame = new patientSearch(1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
@@ -84,7 +104,7 @@ public class initialOptions extends JFrame {
     }
 
     public static void main(String[] args) {
-        initialOptions frame2 = new initialOptions();
+        adminOptions frame2 = new adminOptions();
         frame2.pack();
         frame2.setSize(700,400);
         frame2.setLocationRelativeTo(null);

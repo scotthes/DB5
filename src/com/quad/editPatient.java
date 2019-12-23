@@ -1,17 +1,29 @@
 package com.quad;
 
-        import javax.swing.*;
-        import java.awt.event.ActionEvent;
-        import java.awt.event.ActionListener;
+import com.quad.ClientData.MedCentre;
+import com.quad.ClientData.Patient;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class editPatient extends JFrame {
-    private JButton newPatBut;
-    private JButton exPatBut;
+    private JPanel newPatientPanel;
     private JButton OKButton;
-    private JPanel patientPanel;
+    private JTextField nameField;
+    private JTextField emailField;
+    private JTextField idField;
+    private JComboBox<String> medCentreBox;
+    private JTextField phoneField;
+    private JTextField addressField;
+    private JComboBox dayBox;
+    private JComboBox monthBox;
+    private JComboBox yearBox;
 
-    editPatient(){
-        setContentPane(patientPanel);
+    editPatient(Patient currentPatient) {
+        comboBoxSetup();
+        fillExistingDetails(currentPatient);
+        setContentPane(newPatientPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -22,38 +34,34 @@ public class editPatient extends JFrame {
                 goBack();
             }
         });
-
-        newPatBut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                newPatient();
-            }
-        });
-        exPatBut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "Sorry, that feature is coming soon!");
-            }
-        });
     }
 
-    private void saveInfo(){
-        //KAY SAVE INFO
-    }
+    private void saveInfo() {
+        String name = nameField.getText(); //Name
+        String email = emailField.getText(); //Email
+        idField.getText(); //ID
+        String phoneNum = phoneField.getText(); //Phone Num
+        String address = addressField.getText(); //Address
+        String day = (String) dayBox.getSelectedItem(); //Day OB
+        String month = (String) monthBox.getSelectedItem(); //Month OB
+        String year = (String) yearBox.getSelectedItem(); //Year OB
+        String bDay = year+" "+month+" "+day;
+        MedCentre medC = new MedCentre((String) medCentreBox.getSelectedItem(), "", 0); //Med Centre
+        medC = medC.search();
+        if (medC.getID()==0){
+            JOptionPane.showMessageDialog(null, "Sorry, there is no medical centre with that name!");//ERROR NO MED CENTRE FOUND W/E
+        }
+        else{
+            Patient pNew= new Patient(name, email, medC, 0, phoneNum, address, bDay);
+            pNew.save();
+            //only saves the patient if a valid medical centre was entered
+        }
 
-    private void newPatient(){
-        dispose();
-        newPatient frame = new newPatient();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     private void goBack(){
         dispose();
-        initialOptions frame = new initialOptions();
+        adminOptions frame = new adminOptions();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
@@ -61,14 +69,41 @@ public class editPatient extends JFrame {
         frame.setVisible(true);
     }
 
+    private void comboBoxSetup(){
+        AutoCompletion.enable(medCentreBox); //Enable searchable combobox
+        medCentreBox.addItem("Chelsea & Westminster Hospital");
+        medCentreBox.addItem("Chelsea Clinic");
+        medCentreBox.addItem("Battersea Bridge GP");
+        medCentreBox.addItem("Bridge Lane Medical Practice");
+    }
+
+    private void fillExistingDetails(Patient currentPatient){
+        if(!currentPatient.getName().equals(" ")){
+            nameField.setText(currentPatient.getName());
+        }
+        if(!currentPatient.getEmail().equals(" ")){
+            emailField.setText(currentPatient.getEmail());
+        }
+        if(currentPatient.getID() !=0){
+            idField.setText(String.valueOf(currentPatient.getID()));
+        }
+        if(!currentPatient.getAddress().equals(" ")){
+            addressField.setText(currentPatient.getAddress());
+        }
+        if(!currentPatient.getPhoneNum().equals(" ")){
+            phoneField.setText(currentPatient.getPhoneNum());
+        }
+        //NEED TO ADD MED CENTRE AND D.O.B BUT IT IS HARD
+
+    }
+
     public static void main(String[] args) {
-        editPatient frame4 = new editPatient();
-        frame4.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame4.pack();
-        frame4.setSize(700,400);
-        frame4.setLocationRelativeTo(null);
-        frame4.setVisible(true);
+        editPatient frame = new editPatient(new Patient(null,null,null,0,null,null,null));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
 }
-
