@@ -15,9 +15,6 @@ public class mainForm extends JFrame {
 
 
     mainForm() {
-        //ImageIcon iconNHS = new ImageIcon("nhs.png");
-        //iconLabel.setIcon(iconNHS);
-        //iconLabel.setText(null);
         setContentPane(panel1);
         getRootPane().setDefaultButton(logInButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

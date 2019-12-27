@@ -3,9 +3,14 @@ package com.quad;
 import com.quad.ClientData.MedCentre;
 import com.quad.ClientData.Patient;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class editPatient extends JFrame {
     private JPanel newPatientPanel;
@@ -19,6 +24,9 @@ public class editPatient extends JFrame {
     private JComboBox dayBox;
     private JComboBox monthBox;
     private JComboBox yearBox;
+    private JButton button1;
+    private JTextField textField1;
+    private JLabel image;
 
     editPatient(Patient currentPatient) {
         comboBoxSetup();
@@ -35,6 +43,45 @@ public class editPatient extends JFrame {
                 goBack();
             }
         });
+
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.showOpenDialog(null);
+                File f = chooser.getSelectedFile();
+                String filename = f.getAbsolutePath();
+                textField1.setText(filename);
+                try {
+                    ImageIcon ii=new ImageIcon(scaleImage(ImageIO.read(new File(f.getAbsolutePath()))));//get the image from file chooser and scale it to match JLabel size
+                    image.setIcon(ii); //SHOW THE IMAGE
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
+                try {
+                    theImage = ImageIO.read(f);
+                    ImageIO.write(theImage, "jpg", new File("C://Users/scott/Desktop/image.png")); //THIS SAVES IT LOCALLY SOMEWHERE IDK
+                } catch (IOException e) {
+                    System.out.println("Exception occured :" + e.getMessage());
+                }
+                System.out.println("Images were written succesfully.");
+            }
+        });
+
+    }
+
+    private static BufferedImage scaleImage(BufferedImage img) throws Exception {
+        BufferedImage bi;
+        bi = new BufferedImage(60, 100, BufferedImage.TRANSLUCENT);
+        Graphics2D g2d = (Graphics2D) bi.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.drawImage(img, 0, 0, 120, 120, null);
+        g2d.dispose();
+        return bi;
     }
 
     private void saveInfo(int id) {
