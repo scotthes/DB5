@@ -23,7 +23,6 @@ public class patientSearchResults extends JFrame{
     private JButton button10;
     private JButton nextPageButton;
     private ArrayList<JButton> resultsButtons = new ArrayList<>();
-    private ArrayList<String> namesResults= new ArrayList<>();
 
 
     patientSearchResults(Patient pSearch, int user, int pageNo) {
@@ -31,6 +30,7 @@ public class patientSearchResults extends JFrame{
         ArrayList<Patient> results = pSearch.searchPatient(pageNo);
 
         System.out.println(resultCount);
+        ArrayList<String> namesResults = new ArrayList<>();
         for (Patient result : results) {
             namesResults.add(result.getName() + " ----- " + result.getEmail());
             System.out.println(result.getID() + result.getName() + result.getPhoneNum() + result.getEmail() + result.getAddress() +
@@ -73,7 +73,9 @@ public class patientSearchResults extends JFrame{
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     if (user == 0){
-                        JOptionPane.showMessageDialog(null, "You are a GP");
+                        Patient currentPatient = (Patient) results.get(finalI);
+                        goPatientHome(currentPatient);
+                        //JOptionPane.showMessageDialog(null, "You are a GP");
                     }
                     else if (user == 1){
                         Patient currentPatient = (Patient) results.get(finalI);
@@ -113,6 +115,16 @@ public class patientSearchResults extends JFrame{
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+    private void goPatientHome(Patient currentPatient){
+        dispose();
+        patientHome frame = new patientHome(currentPatient);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
 
     private void setButtons(ArrayList results, int resultsCount){
         titleLabel.setText(String.format("%d Results Were Found", resultsCount));
