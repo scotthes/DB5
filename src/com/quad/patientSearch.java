@@ -27,9 +27,9 @@ public class patientSearch extends JFrame {
         setContentPane(optionsGPPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        if(type == 0){
+        /*if(type == 0){
             addPhotoGP();
-        }
+        }*/
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -62,7 +62,7 @@ public class patientSearch extends JFrame {
         String year = (String) comboBox1.getSelectedItem(); //Year OB
         String bDay = year+" "+month+" "+day;
         Patient pSearch = new Patient(name, null, null, 0, null, address, bDay);
-        dispose();
+        dispose(); //WE NEED TO LOOK AT IF THERE ARE NO RESULTS... THERE IS A BUG
         patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -71,7 +71,7 @@ public class patientSearch extends JFrame {
         frame.setVisible(true);
     }
 
-    private void addPhotoGP(){
+    /*private void addPhotoGP(){
         try {
             ImageIcon photo = new ImageIcon(scaleImage(ImageIO.read(new File("C://Users/scott/Desktop/image.png"))));
             gpPhoto.setIcon(photo);
@@ -80,7 +80,7 @@ public class patientSearch extends JFrame {
         }
 
 
-    }
+    }*/
 
     private static BufferedImage scaleImage(BufferedImage img) throws Exception {
         BufferedImage bi;
