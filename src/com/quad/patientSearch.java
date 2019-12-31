@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class patientSearch extends JFrame {
@@ -61,14 +62,20 @@ public class patientSearch extends JFrame {
         String month = (String) comboBox3.getSelectedItem(); //Month OB
         String year = (String) comboBox1.getSelectedItem(); //Year OB
         String bDay = year+" "+month+" "+day;
-        Patient pSearch = new Patient(name, null, null, 0, null, address, bDay);
-        dispose(); //WE NEED TO LOOK AT IF THERE ARE NO RESULTS... THERE IS A BUG
-        patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Patient pSearch = new Patient(name, null, null, 0, InputStream.nullInputStream(),null , address, bDay);
+        int resultCount = pSearch.searchCount();
+        if(resultCount == 0){
+            JOptionPane.showMessageDialog(null, "Sorry, no patient with those details can be found!");
+        }
+        else {
+            patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setSize(700, 400);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+            this.dispose(); //WE NEED TO LOOK AT IF THERE ARE NO RESULTS... THERE IS A BUG
+        }
     }
 
     /*private void addPhotoGP(){

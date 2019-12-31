@@ -1,13 +1,15 @@
 package com.quad.ClientData;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.quad.DataAccess;
+
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class Note {
-    private java.util.Date Date;
+    private LocalDateTime Date;
     private String Text;
     private int CaseID;
-    public Note(Date date,
+    public Note(LocalDateTime date,
                 String text,
                 int caseID){
         Date = date;
@@ -15,19 +17,22 @@ public class Note {
         CaseID = caseID;
     }
 
-    public Date getDate(){
+    public LocalDateTime getDate(){
         return Date;
     }
 
-    public String getDateString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(Date);
-    }
+
     public int getCaseID() {
         return CaseID;
     }
     public String getText() {
         return Text;
     }
-
+    public void save(){
+        try {
+            DataAccess.saveNote(this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

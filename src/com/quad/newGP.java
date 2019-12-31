@@ -9,8 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class newGP extends JFrame{
     private JTextField textField1;
@@ -24,11 +23,12 @@ public class newGP extends JFrame{
     private JTextField photoAddress;
     private JButton button1;
     private JLabel image;
-
+    private InputStream theImage;
     newGP(){
         setContentPane(GPPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        theImage = null;
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -43,22 +43,23 @@ public class newGP extends JFrame{
                 JFileChooser chooser = new JFileChooser();
                 chooser.showOpenDialog(null);
                 File f = chooser.getSelectedFile();
-                String filename = f.getAbsolutePath();
-                textField1.setText(filename);
                 try {
-                    ImageIcon ii=new ImageIcon(scaleImage(ImageIO.read(new File(f.getAbsolutePath()))));//get the image from file chooser and scale it to match JLabel size
-                    image.setIcon(ii); //SHOW THE IMAGE
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    theImage = new FileInputStream(f);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
-
-                BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
+                String filename = f.getAbsolutePath();
+                photoAddress.setText(filename);
+                //BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
                 try {
-                    theImage = ImageIO.read(f);
-                    ImageIO.write(theImage, "jpg", new File("C://Users/scott/Desktop/image.png")); //THIS SAVES IT LOCALLY SOMEWHERE IDK
-                } catch (IOException e) {
-                    System.out.println("Exception occured :" + e.getMessage());
+                    image.setIcon(new ImageIcon(scaleImage(ImageIO.read(theImage))));
+                } catch (Exception e) {
+                    e.getMessage();
+                }
+                try {
+                    theImage = new FileInputStream(f);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
                 System.out.println("Images were written succesfully.");
             }
@@ -79,8 +80,8 @@ public class newGP extends JFrame{
             JOptionPane.showMessageDialog(null, "Sorry, no medical centre with that name could be found!");
         }
         else{
-            GP newGP = new GP(name, email, medC, 0, pagerNum, username, Password);
-            newGP.save();
+            GP nGP = new GP(name, email, medC, 0, theImage, pagerNum, username, Password);
+            nGP.save();
             //only saves the gp if valid medical centre entered
         }
 
@@ -88,7 +89,7 @@ public class newGP extends JFrame{
 
     private static BufferedImage scaleImage(BufferedImage img) throws Exception {
         BufferedImage bi;
-        bi = new BufferedImage(60, 100, BufferedImage.TRANSLUCENT);
+        bi = new BufferedImage(120, 120, BufferedImage.TRANSLUCENT);
         Graphics2D g2d = (Graphics2D) bi.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));

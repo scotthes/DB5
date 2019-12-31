@@ -2,22 +2,23 @@ package com.quad;
 import com.quad.ClientData.*;
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
 import javax.xml.transform.Result;
-import java.io.InputStream;
-import java.io.Reader;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 public class DataAccess {
     public static Connection connect(){
-        String url = "jdbc:postgresql://localhost:5432/postgres"; // change to web url when server set up
-        String user = "postgres";
-        String password = "pass"; // change to whatever postgres password is
+        String url = "jdbc:postgresql://ec2-54-195-252-243.eu-west-1.compute.amazonaws.com:5432/dbelilspt7ge3m"; // change to web url when server set up
+        String user = "fjmisibystymlz";
+        String password = "ebbd5d6575060e77fbf9aeb335c66bf4441cac094218713a75585511a6f7aae5"; // change to whatever postgres password is
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, user, password);
@@ -33,9 +34,16 @@ public class DataAccess {
     public static void savePatient(@NotNull Patient input) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "INSERT INTO patients "+
-                "(fullname, patientadd, emailadd, medicalcentre, phonenumber, dob)" +
-                "values (?, ?, ?, ?, ?, ?);";
-        java.sql.Date dateOB = new java.sql.Date(input.getDOBDate().getTime());
+                "(fullname, patientadd, emailadd, medicalcentre, phonenumber, dob, picture)" +
+                "values (?, ?, ?, ?, ?, ?, ?);";
+        byte[] targetArray = new byte[0];
+        try {
+            targetArray = new byte[input.getPicture().available()];
+            input.getPicture().read(targetArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        java.sql.Date dateOB = Date.valueOf(input.getDOBDate());
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,input.getName());
         ps.setString(2,input.getAddress());
@@ -43,6 +51,7 @@ public class DataAccess {
         ps.setInt(4,input.getMedC().getID());
         ps.setString(5,input.getPhoneNum());
         ps.setDate(6, dateOB);
+        ps.setBytes(7, targetArray);
         ps.executeUpdate();
     }
 
@@ -54,9 +63,30 @@ public class DataAccess {
                 "emailadd = ?,"+
                 "medicalcentre = ?,"+
                 "phonenumber = ?,"+
-                "dob= ? " +
+                "dob= ?, " +
+                "picture = ? " +
                 "WHERE id = ?;";
-        java.sql.Date dateOB = new java.sql.Date(input.getDOBDate().getTime());
+        byte[] targetArray = new byte[0];
+        /*
+        try {
+            input.setPicture(new FileInputStream(new File("src/com/quad/ClientData/blank-profile-picture.png")));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+         */
+        try {
+            targetArray = new byte[input.getPicture().available()];
+            input.getPicture().read(targetArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            System.out.println( "Data Access "+ input.getPicture().available());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Date dateOB = Date.valueOf(input.getDOBDate());
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,input.getName());
         ps.setString(2,input.getAddress());
@@ -64,7 +94,9 @@ public class DataAccess {
         ps.setInt(4,input.getMedC().getID());
         ps.setString(5,input.getPhoneNum());
         ps.setDate(6, dateOB);
-        ps.setInt(7,input.getID());
+        ps.setBytes(7, targetArray);
+        //ps.setBinaryStream(7, input.getPicture());
+        ps.setInt(8,input.getID());
         ps.executeUpdate();
     }
 
@@ -85,7 +117,7 @@ public class DataAccess {
             dateOB = null;
         }
         else {
-            dateOB = new java.sql.Date(input.getDOBDate().getTime());
+            dateOB = Date.valueOf(input.getDOBDate());
         }
         //why are there two  different types of date? ahhhhhhhhhh
         PreparedStatement ps = conn.prepareStatement(query);
@@ -117,7 +149,7 @@ public class DataAccess {
             dateOB = null;
         }
         else {
-            dateOB = new java.sql.Date(input.getDOBDate().getTime());
+            dateOB = Date.valueOf(input.getDOBDate());
         }
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,"%"+input.getName()+"%");
@@ -133,14 +165,24 @@ public class DataAccess {
 
         return ps.executeQuery();
     }
+
+    public static InputStream refreshPatientPic(Patient input) throws SQLException {
+        Connection conn = DataAccess.connect();
+        String query = "Select picture from patients where id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, input.getID());
+        ResultSet rs = ps.executeQuery();
+        boolean k = rs.next();
+        return new ByteArrayInputStream(rs.getBytes("picture"));
+    }
     /*===================================================================================================================================*/
     /*==============================                              GP QUERIES                               ==============================*/
     /*===================================================================================================================================*/
     public static void saveGP(@NotNull GP input) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "INSERT INTO gp " +
-                "(fullname, pagernum, emailadd, medicalcentreid, username, pswrd) " +
-                "VALUES (?,?,?,?,?,?);";
+                "(fullname, pagernum, emailadd, medicalcentreid, username, pswrd, picture) " +
+                "VALUES (?,?,?,?,?,?,?);";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,input.getName());
         ps.setString(2,input.getPagerNum());
@@ -148,6 +190,7 @@ public class DataAccess {
         ps.setInt(4,input.getMedC().getID());
         ps.setString(5,input.getUserName());
         ps.setString(6,input.getPassword());
+        ps.setBinaryStream(7, input.getPicture());
         ps.executeUpdate();
     }
 
@@ -170,7 +213,7 @@ public class DataAccess {
 
     public static ResultSet searchGP(@NotNull GP input, int pageNo) throws SQLException {
         Connection conn = DataAccess.connect();
-        String query =  "SELECT id, fullname, pagernum, username, emailadd, medicalcentre, mcname, mcadd from " +
+        String query =  "SELECT id, fullname, pagernum, username, emailadd, medicalcentre, mcname, mcadd, picture from " +
                 "(SELECT *, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from gp " +
                 "INNER JOIN medicalcentre " +
                 "ON gp.medicalcentreid = medicalcentre.id " +
@@ -194,7 +237,7 @@ public class DataAccess {
 
     public static boolean GPLogin(String Username, @NotNull String Password) throws SQLException {
         Connection conn = DataAccess.connect();
-        String query = "SELECT gp.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd from gp " +
+        String query = "SELECT gp.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd, picture from gp " +
                 "INNER JOIN medicalcentre " +
                 "ON gp.medicalcentreid = medicalcentre.id " +
                 "WHERE username = ? AND pswrd = ?;";
@@ -213,12 +256,22 @@ public class DataAccess {
             String mcName = rs.getString(7);
             String mcAdd = rs.getString(8);
             MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
-            GP gpActive = new GP(nameIn, emailIn, MedCIn, idIn, pagNumIn, usernameIn, "n/a");
+            InputStream picIn = new ByteArrayInputStream(rs.getBytes(9));
+            GP gpActive = new GP(nameIn, emailIn, MedCIn, idIn, picIn, pagNumIn, usernameIn, "n/a");
             Global.ActiveGP = gpActive;
         }
         return validLogin;
     }
 
+    public static InputStream refreshGPPic(GP input) throws SQLException {
+        Connection conn = DataAccess.connect();
+        String query = "Select picture from gp where id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, input.getID());
+        ResultSet rs = ps.executeQuery();
+        boolean k = rs.next();
+        return new ByteArrayInputStream(rs.getBytes("picture"));
+    }
     /*===================================================================================================================================*/
     /*==============================                        MEDICAL CENTRE QUERIES                         ==============================*/
     /*===================================================================================================================================*/
@@ -231,6 +284,7 @@ public class DataAccess {
         ps.setString(1,input.getName());
         ps.setString(2,input.getAddress());
         ps.executeUpdate();
+        DataAccess.loadMedCs();
     }
     public static ResultSet searchMedC(@NotNull MedCentre input, int pageNo) throws SQLException {
         Connection conn = DataAccess.connect();
@@ -243,20 +297,38 @@ public class DataAccess {
         ps.setInt(2,10*pageNo);
         return ps.executeQuery();
     }
+    public static void loadMedCs() throws SQLException {
+        Connection conn = DataAccess.connect();
+        String query = "SELECT * FROM medicalcentre";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        ArrayList<MedCentre> results = new ArrayList<>();
+        while(rs.next()){
+            int idIn = rs.getInt(1);
+            String nameIn = rs.getString(2);
+            String addIn = rs.getString(3);
+            MedCentre mc = new MedCentre(nameIn, addIn, idIn);
+            results.add(mc);
+        }
+        Global.MCList=results;
+    }
     /*===================================================================================================================================*/
     /*==============================                          CASE REPORT QUERIES                          ==============================*/
     /*===================================================================================================================================*/
-    public static void saveCaseReport(@NotNull CaseReport input) throws SQLException {
+    public static int saveCaseReport(@NotNull CaseReport input) throws SQLException {
         Connection conn = DataAccess.connect();
-        String query = "INSERT INTO casereport" +
+        String query = "INSERT INTO casereports " +
                 "(patientid, gpid, condition, chronic) " +
-                "VALUES (?,?,?,?);";
+                "VALUES (?,?,?,?) " +
+                "RETURNING id;"; //Also not an error
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1,input.getPatientID());
         ps.setInt(2,input.getGPID());
         ps.setString(3,input.getCondition());
         ps.setBoolean(4,input.getChronic());
-        ps.executeUpdate();
+        ResultSet rs = ps.executeQuery();
+        boolean k = rs.next();
+        return rs.getInt(1);
     }
 
     public static ResultSet searchCaseReport(int patientID, int GPID, int pageNo) throws SQLException {
@@ -281,7 +353,7 @@ public class DataAccess {
                 "(notedate, note, casereportid)" +
                 "VALUES (?,?,?);";
         PreparedStatement ps = conn.prepareStatement(query);
-        java.sql.Date date = new java.sql.Date(input.getDate().getTime());
+        Date date = Date.valueOf(input.getDate().toLocalDate());
         ps.setDate(1,date);
         ps.setString(2,input.getText());
         ps.setInt(3,input.getCaseID());
@@ -314,20 +386,20 @@ public class DataAccess {
     public static void saveMedication(@NotNull Medication input) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "INSERT INTO medication" +
-                "(name, startdate, duration, usagenotes,casereportid)" +
+                "(medname, startdate, duration, usagenotes, casereportid)" +
                 "VALUES (?,?,?,?,?);";
         PreparedStatement ps = conn.prepareStatement(query);
-        java.sql.Date startDate = new java.sql.Date(input.getStartDate().getTime());
+        Date startDate = Date.valueOf(input.getStartDate().toLocalDate());
         ps.setString(1,input.getName());
         ps.setDate(2,startDate);
         ps.setInt(3,input.getDuration());
         ps.setString(4,input.getUsageNotes());
-        ps.setInt(4,input.getCaseID());
+        ps.setInt(5,input.getCaseID());
         ps.executeUpdate();
     }
     public static ResultSet searchMedAll(int caseID, int pageNo) throws SQLException {
         Connection conn = DataAccess.connect();
-        String query =  "SELECT name, startdate, duration, usuagenotes from medication" +
+        String query =  "SELECT medname, startdate, duration, usuagenotes from medication" +
                 "(SELECT *, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from medication " +
                 "WHERE (casereportid = ?)) eoo " +
                 "WHERE RowNumber > ? ORDER BY startdate DESC LIMIT 10;";

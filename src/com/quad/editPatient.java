@@ -9,8 +9,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.Buffer;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 public class editPatient extends JFrame {
     private JPanel newPatientPanel;
@@ -27,14 +29,28 @@ public class editPatient extends JFrame {
     private JButton button1;
     private JTextField textField1;
     private JLabel image;
+    private InputStream chosenImage;
 
     editPatient(Patient currentPatient) {
+
         comboBoxSetup();
         fillExistingDetails(currentPatient);
         setContentPane(newPatientPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         int id = currentPatient.getID();
+        chosenImage = currentPatient.getPicture();
+        try {
+            System.out.println("edit patient before Icon " + currentPatient.getName() + ": "+ currentPatient.getPicture().available());
+            image.setIcon(new ImageIcon(scaleImage(ImageIO.read(chosenImage))));
+            System.out.println("edit patient after Icon" + currentPatient.getName() + ": "+ currentPatient.getPicture().available());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (currentPatient.getID()!=0) {
+            currentPatient.refreshPic();
+        }
+        chosenImage = currentPatient.getPicture();
 
         OKButton.addActionListener(new ActionListener() {
             @Override
@@ -50,22 +66,23 @@ public class editPatient extends JFrame {
                 JFileChooser chooser = new JFileChooser();
                 chooser.showOpenDialog(null);
                 File f = chooser.getSelectedFile();
+                try {
+                    chosenImage = new FileInputStream(f);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 String filename = f.getAbsolutePath();
                 textField1.setText(filename);
+                //BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
                 try {
-                    ImageIcon ii=new ImageIcon(scaleImage(ImageIO.read(new File(f.getAbsolutePath()))));//get the image from file chooser and scale it to match JLabel size
-                    image.setIcon(ii); //SHOW THE IMAGE
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    image.setIcon(new ImageIcon(scaleImage(ImageIO.read(chosenImage))));
+                } catch (Exception e) {
+                    e.getMessage();
                 }
-
-                BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
                 try {
-                    theImage = ImageIO.read(f);
-                    ImageIO.write(theImage, "jpg", new File("C://Users/scott/Desktop/image.png")); //THIS SAVES IT LOCALLY SOMEWHERE IDK
-                } catch (IOException e) {
-                    System.out.println("Exception occured :" + e.getMessage());
+                    chosenImage = new FileInputStream(f);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
                 System.out.println("Images were written succesfully.");
             }
@@ -79,7 +96,7 @@ public class editPatient extends JFrame {
         Graphics2D g2d = (Graphics2D) bi.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-        g2d.drawImage(img, 0, 0, 120, 120, null);
+        g2d.drawImage(img, 0, 0, 60, 100, null);
         g2d.dispose();
         return bi;
     }
@@ -96,11 +113,16 @@ public class editPatient extends JFrame {
         String bDay = year+" "+month+" "+day;
         MedCentre medC = new MedCentre((String) medCentreBox.getSelectedItem(), "", 0); //Med Centre
         medC = medC.search();
+        try {
+            System.out.println("edit patient save " + name + ": "+ chosenImage.available());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (medC.getID()==0){
             JOptionPane.showMessageDialog(null, "Sorry, there is no medical centre with that name!");//ERROR NO MED CENTRE FOUND W/E
         }
         else{
-            Patient pNew= new Patient(name, email, medC, id, phoneNum, address, bDay);
+            Patient pNew= new Patient(name, email, medC, id, chosenImage, phoneNum, address, bDay);
             pNew.save();
             //only saves the patient if a valid medical centre was entered
         }
@@ -119,10 +141,9 @@ public class editPatient extends JFrame {
 
     private void comboBoxSetup(){
         AutoCompletion.enable(medCentreBox); //Enable searchable combobox
-        medCentreBox.addItem("Chelsea & Westminster Hospital");
-        medCentreBox.addItem("Chelsea Clinic");
-        medCentreBox.addItem("Battersea Bridge GP");
-        medCentreBox.addItem("Bridge Lane Medical Practice");
+        for (int i = 0; i < Global.MCList.size(); i++){
+            medCentreBox.addItem(Global.MCList.get(i).getName());
+        }
     }
 
     private void fillExistingDetails(Patient currentPatient){
@@ -141,12 +162,21 @@ public class editPatient extends JFrame {
         if(!currentPatient.getPhoneNum().equals(" ")){
             phoneField.setText(currentPatient.getPhoneNum());
         }
+        if(currentPatient.getMedC()!=null){
+            medCentreBox.setSelectedItem(currentPatient.getMedC().getName());
+        }
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
+        dayBox.setSelectedItem(dtf.format(currentPatient.getDOBDate()));
+        dtf = DateTimeFormatter.ofPattern("MMMM");
+        monthBox.setSelectedItem(dtf.format(currentPatient.getDOBDate()));
+        dtf = DateTimeFormatter.ofPattern("yyyy");
+        yearBox.setSelectedItem(dtf.format(currentPatient.getDOBDate()));
         //NEED TO ADD MED CENTRE AND D.O.B BUT IT IS HARD
 
     }
 
     public static void main(String[] args) {
-        editPatient frame = new editPatient(new Patient(" "," ",null,0," "," "," "));
+        editPatient frame = new editPatient(new Patient(" "," ",null,0, null," "," "," "));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);

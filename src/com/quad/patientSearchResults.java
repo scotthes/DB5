@@ -1,6 +1,7 @@
 package com.quad;
 
 import com.quad.ClientData.Patient;
+import com.quad.ClientData.Person;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -25,27 +26,21 @@ public class patientSearchResults extends JFrame{
     private ArrayList<JButton> resultsButtons = new ArrayList<>();
 
 
-    patientSearchResults(Patient pSearch, int user, int pageNo) {
+    patientSearchResults(Person pSearch, int user, int pageNo) {
         int resultCount = pSearch.searchCount();
-        ArrayList<Patient> results = pSearch.searchPatient(pageNo);
-
         System.out.println(resultCount);
+        ArrayList<Person> results = pSearch.search(pageNo);
         ArrayList<String> namesResults = new ArrayList<>();
-        for (Patient result : results) {
+        for (Person result : results) {
             namesResults.add(result.getName() + " ----- " + result.getEmail());
-            System.out.println(result.getID() + result.getName() + result.getPhoneNum() + result.getEmail() + result.getAddress() +
-                    result.getDOBString() + result.getMedC().getID() + result.getMedC().getName() + result.getMedC().getAddress());
         }
-
-        if(resultCount == 0){
-            JOptionPane.showMessageDialog(null, "Sorry, no patient with those details can be found!");
-            goBack(user);
-        }
-
         setButtons(namesResults, resultCount);
         setContentPane(searchResultsPanel);
         getRootPane().setDefaultButton(searchAgainButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+
+
         searchAgainButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -63,8 +58,13 @@ public class patientSearchResults extends JFrame{
         nextPageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                int nextPage=pageNo+1;
-                changePage(nextPage, pSearch, user);
+                if (resultCount/10 > pageNo) {
+                    int nextPage = pageNo + 1;
+                    changePage(nextPage, pSearch, user);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "No more results!");
+                }
             }
         });
         for(int i = 0; i < results.size(); i++){
@@ -86,7 +86,7 @@ public class patientSearchResults extends JFrame{
         }
     }
 
-    private void changePage(int nextPage, Patient pSearch, int user) {
+    private void changePage(int nextPage, Person pSearch, int user) {
         dispose();
         patientSearchResults frame = new patientSearchResults(pSearch, user, nextPage);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -148,7 +148,7 @@ public class patientSearchResults extends JFrame{
         }
     }
     public static void main(String[] args) {
-        Patient blankPatient = new Patient(" "," ",null,0," "," "," ");
+        Patient blankPatient = new Patient(" "," ",null,0, null," "," ","1915 January 01");
         int blankUser = 2;
         patientSearchResults frame2 = new patientSearchResults(blankPatient, blankUser, 0);
         frame2.pack();

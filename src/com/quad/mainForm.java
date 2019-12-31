@@ -42,6 +42,11 @@ public class mainForm extends JFrame {
 
     public static void main(String[] args){
         System.out.println("THIS VERSION WAS USED IN PRESENTATION");
+        try {
+            DataAccess.loadMedCs();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         mainForm frame = new mainForm();
         frame.pack();
         frame.setSize(700,400);

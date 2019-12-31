@@ -62,7 +62,7 @@ public class patientHome extends JFrame {
     }
 
     public static void main(String[] args) {
-        Patient blankPatient = new Patient(" "," ",null,0," "," "," ");
+        Patient blankPatient = new Patient(" "," ",null,0, null," "," "," ");
         patientHome frame2 = new patientHome(blankPatient);
         frame2.pack();
         frame2.setSize(700,400);

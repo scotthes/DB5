@@ -5,6 +5,7 @@ import com.quad.ClientData.Patient;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.InputStream;
 
 //Define initialOptions class as an extension of JFrame
 public class adminOptions extends JFrame {
@@ -74,7 +75,7 @@ public class adminOptions extends JFrame {
 
     private void newPatient(){
         dispose();
-        Patient nullPatient = new Patient(" "," ",null,0," "," "," ");
+        Patient nullPatient = new Patient(" "," ",null,0, InputStream.nullInputStream()," "," ","1915 January 01");
         editPatient frame = new editPatient(nullPatient);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();

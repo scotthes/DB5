@@ -2,37 +2,41 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Patient extends Person {
     private String PhoneNum;
     private String Address;
-    private Date DateOfBirth;
+    private LocalDate DateOfBirth;
     private ArrayList<CaseReport> CaseReports;
     public Patient(String NameIn,
                    String EmailIn,
                    MedCentre MedCIn,
                    int IDIn,
+                   InputStream PicIn,
                    String PhoneNumIn,
                    String AddressIn,
                    String DateOBIn) {
-        super(NameIn, EmailIn, MedCIn, IDIn);
+        super(NameIn, EmailIn, MedCIn, IDIn, PicIn);
         PhoneNum = PhoneNumIn;
         Address = AddressIn;
         // date is converted into format that is more easily parsed into SQL Date type
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMMMM dd");
-        try {
-            date = sdf.parse(DateOBIn);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        DateOfBirth = date;
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy MMMM dd");
+        DateTimeFormatter dtf = new DateTimeFormatterBuilder().parseCaseInsensitive().parseLenient().append(f).toFormatter();
+        DateOfBirth = LocalDate.parse(DateOBIn, dtf);
     }
 
     public String getPhoneNum() {
@@ -51,13 +55,13 @@ public class Patient extends Person {
         Address = address;
     }
 
-    public Date getDOBDate(){
+    public LocalDate getDOBDate(){
         return DateOfBirth;
     }
 
     public String getDOBString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(DateOfBirth);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return dtf.format(DateOfBirth);
     }
 
     public void addCase(String condition,
@@ -90,14 +94,15 @@ public class Patient extends Person {
         }
     }
 
-    public ArrayList<Patient> searchPatient(int pageNo){
+    @Override
+    public ArrayList<Person> search(int pageNo){
         ResultSet rs = null;
         try {
             rs = DataAccess.searchPatient(this, pageNo);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ArrayList<Patient> results = new ArrayList<>();
+        ArrayList<Person> results = new ArrayList<>();
         try {
             while (rs.next()) {
                 String nameIn = rs.getString("fullname");
@@ -105,13 +110,14 @@ public class Patient extends Person {
                 int idIn = rs.getInt(1);
                 String phoneIn = rs.getString("phonenumber");
                 String addressIn = rs.getString("patientadd");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMMMM dd");
-                String DOBin = sdf.format(rs.getDate("dob"));
-                int mcid = rs.getInt(8);
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMMM dd");
+                String DOBin = dtf.format(rs.getDate("dob").toLocalDate());
+                int mcid = rs.getInt(9);
                 String mcName = rs.getString("mcname");
                 String mcAdd = rs.getString("mcadd");
                 MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
-                Patient pRes = new Patient(nameIn, emailIn, MedCIn, idIn, phoneIn, addressIn, DOBin);
+                InputStream picIn = new ByteArrayInputStream(rs.getBytes("picture"));
+                Patient pRes = new Patient(nameIn, emailIn, MedCIn, idIn, picIn, phoneIn, addressIn, DOBin);
                 results.add(pRes);
             }
         }catch (SQLException e) {
@@ -119,6 +125,17 @@ public class Patient extends Person {
         }
         return results;
     }
+
+    @Override
+    public void refreshPic() {
+        try {
+            Picture = DataAccess.refreshPatientPic(this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public int searchCount() {
         int count = 0;
         try {

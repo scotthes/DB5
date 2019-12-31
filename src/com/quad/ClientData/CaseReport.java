@@ -1,5 +1,9 @@
 package com.quad.ClientData;
 
+import com.quad.DataAccess;
+
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -49,10 +53,7 @@ public class CaseReport {
         IsChronic = chronic;
     }
 
-    public void addNote(Date date,
-                        String time,
-                        String text){
-        Note note = new Note(date, time, this.getCaseID());
+    public void addNote(Note note){
         Notes.add(note);
     }
     public Note getNote(int index){
@@ -63,11 +64,7 @@ public class CaseReport {
         return Notes.size();
     }
 
-    public void addMed(String name,
-                             Date startDate,
-                             int duration,
-                             String usageNotes){
-        Medication med = new Medication(name, startDate, duration, usageNotes, this.getCaseID());
+    public void addMed(Medication med){
         Medications.add(med);
     }
     public Medication getMed(int index){
@@ -76,6 +73,14 @@ public class CaseReport {
 
     public int getMedSize() {
         return Medications.size();
+    }
+
+    public void save(){
+        try {
+            CaseID = DataAccess.saveCaseReport(this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

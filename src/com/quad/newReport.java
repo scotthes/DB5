@@ -1,7 +1,6 @@
 package com.quad;
 
-import com.quad.ClientData.GP;
-import com.quad.ClientData.Patient;
+import com.quad.ClientData.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -59,6 +58,21 @@ public class newReport extends JFrame{
         String caseNotes = caseNotesInput.getText(); //returns case notes as string
         System.out.println(caseNotes);
         System.out.println(isChronic);//Boolean 'isChronic'
+
+        CaseReport newCR = new CaseReport("", gp.getID(), p.getID());
+        if (isChronic != newCR.getChronic()){
+            newCR.setChronic(isChronic);
+        }
+        newCR.save();
+
+        String medName = medInput.getText();
+        int duration = Integer.parseInt(durationInput.getText());
+        Medication med = new Medication(medName, now, duration, "", newCR.getCaseID());
+        med.save();
+
+        String noteText = caseNotesInput.getText();
+        Note note = new Note(now, noteText, newCR.getCaseID());
+        note.save();
     }
 
     private boolean isConditionChronic(){
@@ -77,7 +91,7 @@ public class newReport extends JFrame{
     }
 
     public static void main(String[] args) {
-        Patient blankPatient = new Patient(" "," ",null,0," "," "," ");
+        Patient blankPatient = new Patient(" "," ",null,0, null," "," "," ");
         newReport frame2 = new newReport(blankPatient);
         frame2.pack();
         frame2.setSize(700,400);

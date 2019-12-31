@@ -1,16 +1,18 @@
 package com.quad.ClientData;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.quad.DataAccess;
+
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class Medication {
     private String Name;
-    private Date StartDate;
+    private LocalDateTime StartDate;
     private int Duration;
     private String UsageNotes;
     private int CaseID;
     public Medication(String name,
-                      Date startDate,
+                      LocalDateTime startDate,
                       int duration,
                       String usageNotes,
                       int caseID){
@@ -25,13 +27,8 @@ public class Medication {
         return Name;
     }
 
-    public Date getStartDate(){
+    public LocalDateTime getStartDate(){
         return StartDate;
-    }
-
-    public String getStartDateString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(StartDate);
     }
 
     public int getDuration() {
@@ -44,5 +41,13 @@ public class Medication {
 
     public int getCaseID(){
         return CaseID;
+    }
+
+    public void save() {
+        try {
+            DataAccess.saveMedication(this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
