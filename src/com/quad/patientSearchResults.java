@@ -31,15 +31,15 @@ public class patientSearchResults extends JFrame{
         System.out.println(resultCount);
         ArrayList<Person> results = pSearch.search(pageNo);
         ArrayList<String> namesResults = new ArrayList<>();
+
         for (Person result : results) {
             namesResults.add(result.getName() + " ----- " + result.getEmail());
         }
+
         setButtons(namesResults, resultCount);
         setContentPane(searchResultsPanel);
         getRootPane().setDefaultButton(searchAgainButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
-
 
         searchAgainButton.addActionListener(new ActionListener() {
             @Override
@@ -75,11 +75,13 @@ public class patientSearchResults extends JFrame{
                     if (user == 0){
                         Patient currentPatient = (Patient) results.get(finalI);
                         goPatientHome(currentPatient);
-                        //JOptionPane.showMessageDialog(null, "You are a GP");
                     }
                     else if (user == 1){
                         Patient currentPatient = (Patient) results.get(finalI);
                         goEditPatient(currentPatient);
+                    }
+                    else if (user == 3){
+                        //goEditGP(currentGP);
                     }
                 }
             });
@@ -89,40 +91,24 @@ public class patientSearchResults extends JFrame{
     private void changePage(int nextPage, Person pSearch, int user) {
         dispose();
         patientSearchResults frame = new patientSearchResults(pSearch, user, nextPage);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
     private void goBack(int user){
         dispose();
         patientSearch frame = new patientSearch(user);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
     private void goEditPatient(Patient currentPatient){
         dispose();
         editPatient frame = new editPatient(currentPatient);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
     private void goPatientHome(Patient currentPatient){
         dispose();
         patientHome frame = new patientHome(currentPatient);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
 
@@ -149,12 +135,8 @@ public class patientSearchResults extends JFrame{
     }
     public static void main(String[] args) {
         Patient blankPatient = new Patient(" "," ",null,0, null," "," ","1915 January 01");
-        int blankUser = 2;
-        patientSearchResults frame2 = new patientSearchResults(blankPatient, blankUser, 0);
-        frame2.pack();
-        frame2.setSize(700,400);
-        frame2.setLocationRelativeTo(null);
-        frame2.setVisible(true);
-        frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        int blankUser = 3;
+        patientSearchResults frame = new patientSearchResults(blankPatient, blankUser, 0);
+        Global.frameSetup(frame);
     }
 }

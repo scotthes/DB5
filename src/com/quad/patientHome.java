@@ -44,30 +44,18 @@ public class patientHome extends JFrame {
     private void goBack(){
         dispose();
         patientSearch frame = new patientSearch(0);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
     private void goNewReport(){
         dispose();
         newReport frame = new newReport(currentPatient);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
     public static void main(String[] args) {
         Patient blankPatient = new Patient(" "," ",null,0, null," "," "," ");
-        patientHome frame2 = new patientHome(blankPatient);
-        frame2.pack();
-        frame2.setSize(700,400);
-        frame2.setLocationRelativeTo(null);
-        frame2.setVisible(true);
-        frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        patientHome frame = new patientHome(blankPatient);
+        Global.frameSetup(frame);
     }
 }

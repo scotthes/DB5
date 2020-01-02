@@ -2,9 +2,16 @@ package com.quad;
 
 import com.quad.ClientData.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -17,9 +24,16 @@ public class newReport extends JFrame{
     private JTextField medInput;
     private JLabel titleLabel;
     private JTextField durationInput;
+    private JTextField conditionText;
+    private JTextField textField1;
+    private JButton seePreviousCaseReportsButton;
+    private JTextField textField2;
+    private JButton browseButton;
+    private JLabel image;
     private  Patient p;
     private GP gp;
     private boolean isChronic;
+    private InputStream chosenImage;
 
     newReport(Patient currentPatient) {
         p = currentPatient;
@@ -37,6 +51,53 @@ public class newReport extends JFrame{
                 }
             }
         });
+
+        seePreviousCaseReportsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
+
+        chosenImage = currentPatient.getPicture();
+        browseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                        JFileChooser chooser = new JFileChooser();
+                        chooser.showOpenDialog(null);
+                        File f = chooser.getSelectedFile();
+                        try {
+                            chosenImage = new FileInputStream(f);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        String filename = f.getAbsolutePath();
+                        textField2.setText(filename);
+                        //BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
+                        try {
+                            image.setIcon(new ImageIcon(scaleImage(ImageIO.read(chosenImage))));
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                        try {
+                            chosenImage = new FileInputStream(f);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("Images were written succesfully.");
+            }
+        });
+    }
+
+    private static BufferedImage scaleImage(BufferedImage img) throws Exception {
+        BufferedImage bi;
+        bi = new BufferedImage(60, 100, BufferedImage.TRANSLUCENT);
+        Graphics2D g2d = (Graphics2D) bi.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.drawImage(img, 0, 0, 60, 100, null);
+        g2d.dispose();
+        return bi;
     }
 
     private void goBack(){
@@ -94,7 +155,7 @@ public class newReport extends JFrame{
         Patient blankPatient = new Patient(" "," ",null,0, null," "," "," ");
         newReport frame2 = new newReport(blankPatient);
         frame2.pack();
-        frame2.setSize(700,400);
+        frame2.setSize(1650,1040);
         frame2.setLocationRelativeTo(null);
         frame2.setVisible(true);
         frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

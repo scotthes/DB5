@@ -1,5 +1,6 @@
 package com.quad;
 
+import com.quad.ClientData.GP;
 import com.quad.ClientData.Patient;
 
 import javax.imageio.ImageIO;
@@ -22,15 +23,11 @@ public class patientSearch extends JFrame {
     private JComboBox comboBox1;
     private JComboBox comboBox2;
     private JComboBox comboBox3;
-    private JLabel gpPhoto;
 
     patientSearch(int type){
         setContentPane(optionsGPPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        /*if(type == 0){
-            addPhotoGP();
-        }*/
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -40,19 +37,11 @@ public class patientSearch extends JFrame {
         logOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                homePage();
+                dispose();
+                mainForm frame = new mainForm();
+                Global.frameSetup(frame);
             }
         });
-    }
-
-    private void homePage(){
-        dispose();
-        mainForm frame = new mainForm();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     private void search(int type){
@@ -63,31 +52,17 @@ public class patientSearch extends JFrame {
         String year = (String) comboBox1.getSelectedItem(); //Year OB
         String bDay = year+" "+month+" "+day;
         Patient pSearch = new Patient(name, null, null, 0, InputStream.nullInputStream(),null , address, bDay);
+        //GP gSearch = new GP(name, null, null, 0, InputStream.nullInputStream(),null , address, bDay);
         int resultCount = pSearch.searchCount();
         if(resultCount == 0){
             JOptionPane.showMessageDialog(null, "Sorry, no patient with those details can be found!");
         }
         else {
             patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-            frame.setSize(700, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
+            Global.frameSetup(frame);
             this.dispose(); //WE NEED TO LOOK AT IF THERE ARE NO RESULTS... THERE IS A BUG
         }
     }
-
-    /*private void addPhotoGP(){
-        try {
-            ImageIcon photo = new ImageIcon(scaleImage(ImageIO.read(new File("C://Users/scott/Desktop/image.png"))));
-            gpPhoto.setIcon(photo);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-
-    }*/
 
     private static BufferedImage scaleImage(BufferedImage img) throws Exception {
         BufferedImage bi;
@@ -101,12 +76,8 @@ public class patientSearch extends JFrame {
     }
 
     public static void main(String[] args) {
-        int blankInt = 2;
-        patientSearch frame2 = new patientSearch(blankInt);
-        frame2.pack();
-        frame2.setSize(700,400);
-        frame2.setLocationRelativeTo(null);
-        frame2.setVisible(true);
-        frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        int blankInt = 3;
+        patientSearch frame = new patientSearch(blankInt);
+        Global.frameSetup(frame);
     }
 }

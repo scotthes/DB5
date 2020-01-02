@@ -17,6 +17,7 @@ public class adminOptions extends JFrame {
     private JLabel TitleLabel;
     private JButton logOutButton;
     private JButton exPat;
+    private JButton existingGPButton;
 
     adminOptions() {
         setContentPane(optionsPanel);
@@ -48,68 +49,48 @@ public class adminOptions extends JFrame {
         logOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                homePage();
+                dispose();
+                mainForm frame = new mainForm();
+                Global.frameSetup(frame);
             }
         });
-    }
-
-    private void homePage(){
-        dispose();
-        mainForm frame = new mainForm();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        existingGPButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dispose();
+                patientSearch frame = new patientSearch(2);
+                Global.frameSetup(frame);
+            }
+        });
     }
 
     private void enterNewCentre(){
         dispose();
         newCentre frame = new newCentre();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
     private void newPatient(){
         dispose();
         Patient nullPatient = new Patient(" "," ",null,0, InputStream.nullInputStream()," "," ","1915 January 01");
         editPatient frame = new editPatient(nullPatient);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
     private void exPatient(){
         dispose();
         patientSearch frame = new patientSearch(1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
     private void enterNewGP(){
         dispose();
-        newGP frame = new newGP();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        editGP frame = new editGP();
+        Global.frameSetup(frame);
     }
 
     public static void main(String[] args) {
-        adminOptions frame2 = new adminOptions();
-        frame2.pack();
-        frame2.setSize(700,400);
-        frame2.setLocationRelativeTo(null);
-        frame2.setVisible(true);
-        frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        adminOptions frame = new adminOptions();
+        Global.frameSetup(frame);
     }
 }

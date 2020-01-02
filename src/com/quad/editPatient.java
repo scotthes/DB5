@@ -19,7 +19,7 @@ public class editPatient extends JFrame {
     private JButton OKButton;
     private JTextField nameField;
     private JTextField emailField;
-    private JTextField idField;
+    //private JTextField idField;
     private JComboBox<String> medCentreBox;
     private JTextField phoneField;
     private JTextField addressField;
@@ -29,6 +29,8 @@ public class editPatient extends JFrame {
     private JButton button1;
     private JTextField textField1;
     private JLabel image;
+    private JButton logoutButton;
+    private JButton cancelAndReturnHomeButton;
     private InputStream chosenImage;
 
     editPatient(Patient currentPatient) {
@@ -47,7 +49,7 @@ public class editPatient extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (currentPatient.getID()!=0) {
+        if (id!=0) {
             currentPatient.refreshPic();
         }
         chosenImage = currentPatient.getPicture();
@@ -56,7 +58,9 @@ public class editPatient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 saveInfo(id);
-                goBack();
+                dispose();
+                adminOptions frame = new adminOptions();
+                Global.frameSetup(frame);
             }
         });
 
@@ -88,6 +92,23 @@ public class editPatient extends JFrame {
             }
         });
 
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dispose();
+                mainForm frame = new mainForm();
+                Global.frameSetup(frame);
+            }
+        });
+
+        cancelAndReturnHomeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dispose();
+                adminOptions frame = new adminOptions();
+                Global.frameSetup(frame);
+            }
+        });
     }
 
     private static BufferedImage scaleImage(BufferedImage img) throws Exception {
@@ -104,7 +125,6 @@ public class editPatient extends JFrame {
     private void saveInfo(int id) {
         String name = nameField.getText(); //Name
         String email = emailField.getText(); //Email
-        idField.getText(); //ID
         String phoneNum = phoneField.getText(); //Phone Num
         String address = addressField.getText(); //Address
         String day = (String) dayBox.getSelectedItem(); //Day OB
@@ -126,17 +146,6 @@ public class editPatient extends JFrame {
             pNew.save();
             //only saves the patient if a valid medical centre was entered
         }
-
-    }
-
-    private void goBack(){
-        dispose();
-        adminOptions frame = new adminOptions();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     private void comboBoxSetup(){
@@ -153,9 +162,9 @@ public class editPatient extends JFrame {
         if(!currentPatient.getEmail().equals(" ")){
             emailField.setText(currentPatient.getEmail());
         }
-        if(currentPatient.getID() != 0){
+        /*if(currentPatient.getID() != 0){
             idField.setText(String.valueOf(currentPatient.getID()));
-        }
+        }*/
         if(!currentPatient.getAddress().equals(" ")){
             addressField.setText(currentPatient.getAddress());
         }
@@ -165,23 +174,18 @@ public class editPatient extends JFrame {
         if(currentPatient.getMedC()!=null){
             medCentreBox.setSelectedItem(currentPatient.getMedC().getName());
         }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d");
         dayBox.setSelectedItem(dtf.format(currentPatient.getDOBDate()));
         dtf = DateTimeFormatter.ofPattern("MMMM");
         monthBox.setSelectedItem(dtf.format(currentPatient.getDOBDate()));
         dtf = DateTimeFormatter.ofPattern("yyyy");
         yearBox.setSelectedItem(dtf.format(currentPatient.getDOBDate()));
-        //NEED TO ADD MED CENTRE AND D.O.B BUT IT IS HARD
-
     }
 
     public static void main(String[] args) {
         editPatient frame = new editPatient(new Patient(" "," ",null,0, null," "," "," "));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 
 }

@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-public class newGP extends JFrame{
+public class editGP extends JFrame{
     private JTextField textField1;
     private JTextField textField2;
     private JTextField textField3;
@@ -23,17 +23,23 @@ public class newGP extends JFrame{
     private JTextField photoAddress;
     private JButton button1;
     private JLabel image;
+    private JComboBox<String> medCentreBox;
+    private JButton logoutButton;
+    private JButton cancelAndReturnHomeButton;
     private InputStream theImage;
-    newGP(){
+    editGP(){
         setContentPane(GPPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setupComboBox();
         theImage = null;
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 saveInfo();
-                goBack();
+                dispose();
+                adminOptions frame = new adminOptions();
+                Global.frameSetup(frame);
             }
         });
 
@@ -66,6 +72,22 @@ public class newGP extends JFrame{
         });
 
 
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dispose();
+                mainForm frame = new mainForm();
+                Global.frameSetup(frame);
+            }
+        });
+        cancelAndReturnHomeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dispose();
+                adminOptions frame = new adminOptions();
+                Global.frameSetup(frame);
+            }
+        });
     }
 
     private void saveInfo(){
@@ -74,7 +96,7 @@ public class newGP extends JFrame{
         String pagerNum = textField3.getText(); //Pager Number
         String username = textField5.getText(); //Username
         String Password = textField6.getText(); //Password
-        MedCentre medC = new MedCentre(textField4.getText(), "", 0); //Med Centre
+        MedCentre medC = new MedCentre((String) medCentreBox.getSelectedItem(), "", 0); //Med Centre
         medC = medC.search();
         if (medC.getID()==0){
             JOptionPane.showMessageDialog(null, "Sorry, no medical centre with that name could be found!");
@@ -98,22 +120,15 @@ public class newGP extends JFrame{
         return bi;
     }
 
-    private void goBack(){
-        dispose();
-        adminOptions frame = new adminOptions();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+    private void setupComboBox(){
+        AutoCompletion.enable(medCentreBox); //Enable searchable combobox
+        for (int i = 0; i < Global.MCList.size(); i++){
+            medCentreBox.addItem(Global.MCList.get(i).getName());
+        }
     }
 
     public static void main(String[] args) {
-        newGP frame5 = new newGP();
-        frame5.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame5.pack();
-        frame5.setSize(700,400);
-        frame5.setLocationRelativeTo(null);
-        frame5.setVisible(true);
+        editGP frame = new editGP();
+        Global.frameSetup(frame);
     }
 }

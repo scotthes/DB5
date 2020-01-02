@@ -40,47 +40,25 @@ public class mainForm extends JFrame {
         });
     }
 
+    private void grantAdminAccess(){
+        dispose();
+        adminOptions frame = new adminOptions();
+        Global.frameSetup(frame);
+    }
+
+    private void grantGPAccess(){
+        dispose();
+        patientSearch frame = new patientSearch(0);
+        Global.frameSetup(frame);
+    }
+
     public static void main(String[] args){
-        System.out.println("THIS VERSION WAS USED IN PRESENTATION");
         try {
             DataAccess.loadMedCs();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         mainForm frame = new mainForm();
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-
-    private boolean pwCorrect(){ //not used
-        String rightPw = "pass";
-        String accPw = String.valueOf(pw.getPassword());
-        return accPw.equals(rightPw);
-    }
-
-    private void grantAdminAccess(){
-        adminOptions frame = new adminOptions();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocation(this.getLocation());
-        //frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        this.dispose();
-    }
-
-    private void grantGPAccess(){
-        Point p = this.getLocation();
-        dispose();
-        patientSearch frame = new patientSearch(0);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocation(p);
-        //frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Global.frameSetup(frame);
     }
 }
