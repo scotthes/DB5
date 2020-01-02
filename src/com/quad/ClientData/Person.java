@@ -9,36 +9,22 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public abstract class Person {
-    String Name;
-    String Email;
-    int ID;
-    MedCentre MedC;
-    InputStream Picture;
+    private String Name;
+    private String Email;
+    private int ID;
+    private MedCentre MedC;
     public Person(String NameIn,
                   String EmailIn,
                   MedCentre MedCIn,
-                  int IDIn,
-                  InputStream PicIn){
+                  int IDIn){
         Name = NameIn;
         Email = EmailIn;
         MedC = MedCIn;
         ID = IDIn;
-        try {
-            if (PicIn.available() == 0){
-                Picture = new FileInputStream(new File("src/com/quad/ClientData/blank-profile-picture.png"));
-            }
-            else{
-                Picture = PicIn;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     public abstract int searchCount();
 
     public abstract ArrayList<Person> search(int pageNo);
-
-    public abstract void refreshPic();
 
     public String getName() {
         return Name;
@@ -68,12 +54,6 @@ public abstract class Person {
         return ID;
     }
 
-    public InputStream getPicture(){
-        return Picture;
-    }
-
-    public void setPicture(InputStream newPic){
-        Picture = newPic;
-    }
+    public abstract InputStream getPicture();
 
 }

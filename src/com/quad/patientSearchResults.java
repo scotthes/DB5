@@ -1,5 +1,6 @@
 package com.quad;
 
+import com.quad.ClientData.GP;
 import com.quad.ClientData.Patient;
 import com.quad.ClientData.Person;
 
@@ -80,8 +81,9 @@ public class patientSearchResults extends JFrame{
                         Patient currentPatient = (Patient) results.get(finalI);
                         goEditPatient(currentPatient);
                     }
-                    else if (user == 3){
-                        //goEditGP(currentGP);
+                    else if (user == 2){
+                        GP currentGP = (GP) results.get(finalI);
+                        goEditGP(currentGP);
                     }
                 }
             });
@@ -91,24 +93,30 @@ public class patientSearchResults extends JFrame{
     private void changePage(int nextPage, Person pSearch, int user) {
         dispose();
         patientSearchResults frame = new patientSearchResults(pSearch, user, nextPage);
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
 
     private void goBack(int user){
         dispose();
         patientSearch frame = new patientSearch(user);
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
 
     private void goEditPatient(Patient currentPatient){
         dispose();
         editPatient frame = new editPatient(currentPatient);
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
     private void goPatientHome(Patient currentPatient){
         dispose();
         patientHome frame = new patientHome(currentPatient);
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
+    }
+
+    private void goEditGP(GP currentGP){
+        dispose();
+        editGP frame = new editGP(currentGP);
+        Global.frameSetup(frame, this);
     }
 
 
@@ -134,9 +142,13 @@ public class patientSearchResults extends JFrame{
         }
     }
     public static void main(String[] args) {
-        Patient blankPatient = new Patient(" "," ",null,0, null," "," ","1915 January 01");
+        Patient blankPatient = new Patient(" "," ",null,0," "," ","1915 January 01");
         int blankUser = 3;
         patientSearchResults frame = new patientSearchResults(blankPatient, blankUser, 0);
-        Global.frameSetup(frame);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

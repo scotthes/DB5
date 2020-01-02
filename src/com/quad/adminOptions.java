@@ -1,5 +1,6 @@
 package com.quad;
 
+import com.quad.ClientData.GP;
 import com.quad.ClientData.Patient;
 
 import javax.swing.*;
@@ -49,48 +50,61 @@ public class adminOptions extends JFrame {
         logOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                mainForm frame = new mainForm();
-                Global.frameSetup(frame);
+                logout();
             }
         });
         existingGPButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                patientSearch frame = new patientSearch(2);
-                Global.frameSetup(frame);
+                exGP();
             }
         });
+    }
+
+    private void logout(){
+        dispose();
+        mainForm frame = new mainForm();
+        Global.frameSetup(frame, this);
     }
 
     private void enterNewCentre(){
         dispose();
         newCentre frame = new newCentre();
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
 
     private void newPatient(){
         dispose();
-        Patient nullPatient = new Patient(" "," ",null,0, InputStream.nullInputStream()," "," ","1915 January 01");
+        Patient nullPatient = new Patient(" "," ",null,0," "," ","1915 January 01");
         editPatient frame = new editPatient(nullPatient);
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
 
     private void exPatient(){
         dispose();
         patientSearch frame = new patientSearch(1);
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
 
     private void enterNewGP(){
         dispose();
-        editGP frame = new editGP();
-        Global.frameSetup(frame);
+        GP nullGP = new GP(" ", " ", null, 0, " ", " ", " ");
+        editGP frame = new editGP(nullGP);
+        Global.frameSetup(frame, this);
+    }
+
+    private void exGP(){
+        dispose();
+        patientSearch frame = new patientSearch(2);
+        Global.frameSetup(frame, this);
     }
 
     public static void main(String[] args) {
         adminOptions frame = new adminOptions();
-        Global.frameSetup(frame);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

@@ -4,9 +4,7 @@ import com.quad.DataAccess;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -26,11 +24,10 @@ public class Patient extends Person {
                    String EmailIn,
                    MedCentre MedCIn,
                    int IDIn,
-                   InputStream PicIn,
                    String PhoneNumIn,
                    String AddressIn,
                    String DateOBIn) {
-        super(NameIn, EmailIn, MedCIn, IDIn, PicIn);
+        super(NameIn, EmailIn, MedCIn, IDIn);
         PhoneNum = PhoneNumIn;
         Address = AddressIn;
         // date is converted into format that is more easily parsed into SQL Date type
@@ -66,7 +63,7 @@ public class Patient extends Person {
 
     public void addCase(String condition,
                         int gpID){
-        CaseReport caseReport = new CaseReport(condition, gpID, this.ID);
+        CaseReport caseReport = new CaseReport(condition, gpID, this.getID());
         CaseReports.add(caseReport);
     }
     public CaseReport getCase(int index){
@@ -77,17 +74,17 @@ public class Patient extends Person {
         return CaseReports.size();
     }
 
-    public void save(){
-        if (this.ID == 0){
+    public void save(InputStream pic){
+        if (this.getID() == 0){
             try {
-                DataAccess.savePatient(this);
+                DataAccess.savePatient(this, pic);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         else {
             try {
-                DataAccess.updatePatient(this);
+                DataAccess.updatePatient(this, pic);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -112,12 +109,11 @@ public class Patient extends Person {
                 String addressIn = rs.getString("patientadd");
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMMM dd");
                 String DOBin = dtf.format(rs.getDate("dob").toLocalDate());
-                int mcid = rs.getInt(9);
+                int mcid = rs.getInt(8);
                 String mcName = rs.getString("mcname");
                 String mcAdd = rs.getString("mcadd");
                 MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
-                InputStream picIn = new ByteArrayInputStream(rs.getBytes("picture"));
-                Patient pRes = new Patient(nameIn, emailIn, MedCIn, idIn, picIn, phoneIn, addressIn, DOBin);
+                Patient pRes = new Patient(nameIn, emailIn, MedCIn, idIn, phoneIn, addressIn, DOBin);
                 results.add(pRes);
             }
         }catch (SQLException e) {
@@ -126,13 +122,24 @@ public class Patient extends Person {
         return results;
     }
 
+
     @Override
-    public void refreshPic() {
-        try {
-            Picture = DataAccess.refreshPatientPic(this);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public InputStream getPicture() {
+        if (this.getID()==0){
+            try {
+                return new FileInputStream(new File("src/com/quad/ClientData/blank-profile-picture.png"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+        else {
+            try {
+                return DataAccess.getPatientPic(this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     @Override

@@ -152,7 +152,7 @@ public class newReport extends JFrame{
     }
 
     public static void main(String[] args) {
-        Patient blankPatient = new Patient(" "," ",null,0, null," "," "," ");
+        Patient blankPatient = new Patient(" "," ",null,0," "," "," ");
         newReport frame2 = new newReport(blankPatient);
         frame2.pack();
         frame2.setSize(1650,1040);

@@ -12,11 +12,11 @@ public class Global {
     public static GP ActiveGP;
     public static ArrayList<MedCentre> MCList;
 
-    public static void frameSetup(JFrame frame){
+    public static void frameSetup(JFrame frame, JFrame oldFrame){
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
+        frame.setSize(oldFrame.getWidth(),oldFrame.getHeight());
+        frame.setLocation(oldFrame.getLocation());
         frame.setVisible(true);
     }
 }

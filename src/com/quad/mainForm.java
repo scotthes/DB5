@@ -43,13 +43,13 @@ public class mainForm extends JFrame {
     private void grantAdminAccess(){
         dispose();
         adminOptions frame = new adminOptions();
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
 
     private void grantGPAccess(){
         dispose();
         patientSearch frame = new patientSearch(0);
-        Global.frameSetup(frame);
+        Global.frameSetup(frame, this);
     }
 
     public static void main(String[] args){
@@ -59,6 +59,10 @@ public class mainForm extends JFrame {
             e.printStackTrace();
         }
         mainForm frame = new mainForm();
-        Global.frameSetup(frame);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

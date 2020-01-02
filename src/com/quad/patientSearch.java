@@ -37,11 +37,15 @@ public class patientSearch extends JFrame {
         logOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                mainForm frame = new mainForm();
-                Global.frameSetup(frame);
+                logout();
             }
         });
+    }
+
+    private void logout() {
+        dispose();
+        mainForm frame = new mainForm();
+        Global.frameSetup(frame, this);
     }
 
     private void search(int type){
@@ -51,17 +55,32 @@ public class patientSearch extends JFrame {
         String month = (String) comboBox3.getSelectedItem(); //Month OB
         String year = (String) comboBox1.getSelectedItem(); //Year OB
         String bDay = year+" "+month+" "+day;
-        Patient pSearch = new Patient(name, null, null, 0, InputStream.nullInputStream(),null , address, bDay);
-        //GP gSearch = new GP(name, null, null, 0, InputStream.nullInputStream(),null , address, bDay);
-        int resultCount = pSearch.searchCount();
-        if(resultCount == 0){
-            JOptionPane.showMessageDialog(null, "Sorry, no patient with those details can be found!");
+
+        if (type == 2){
+            GP gSearch = new GP(name, null, null, 0,null, "","");
+            int resultCount = gSearch.searchCount();
+            if(resultCount == 0){
+                JOptionPane.showMessageDialog(null, "Sorry, no GP with those details can be found!");
+            }
+            else {
+                patientSearchResults frame = new patientSearchResults(gSearch, type, 0);
+                Global.frameSetup(frame, this);
+                this.dispose();
+            }
         }
-        else {
-            patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
-            Global.frameSetup(frame);
-            this.dispose(); //WE NEED TO LOOK AT IF THERE ARE NO RESULTS... THERE IS A BUG
+        else{
+            Patient pSearch = new Patient(name, null, null, 0,null , address, bDay);
+            int resultCount = pSearch.searchCount();
+            if(resultCount == 0){
+                JOptionPane.showMessageDialog(null, "Sorry, no patient with those details can be found!");
+            }
+            else {
+                patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
+                Global.frameSetup(frame, this);
+                this.dispose();
+            }
         }
+
     }
 
     private static BufferedImage scaleImage(BufferedImage img) throws Exception {
@@ -75,9 +94,15 @@ public class patientSearch extends JFrame {
         return bi;
     }
 
+
     public static void main(String[] args) {
         int blankInt = 3;
         patientSearch frame = new patientSearch(blankInt);
-        Global.frameSetup(frame);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
     }
 }

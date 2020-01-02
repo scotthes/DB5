@@ -2,6 +2,7 @@ package com.quad;
 
 import com.quad.ClientData.GP;
 import com.quad.ClientData.MedCentre;
+import com.quad.ClientData.Patient;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.time.format.DateTimeFormatter;
 
 public class editGP extends JFrame{
     private JTextField textField1;
@@ -27,19 +29,23 @@ public class editGP extends JFrame{
     private JButton logoutButton;
     private JButton cancelAndReturnHomeButton;
     private InputStream theImage;
-    editGP(){
+    editGP(GP currentGP){
+        setupComboBox();
+        fillExistingDetails(currentGP);
         setContentPane(GPPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setupComboBox();
-        theImage = null;
+        theImage = InputStream.nullInputStream();
+        try {
+            image.setIcon(new ImageIcon(scaleImage(ImageIO.read(currentGP.getPicture()))));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                saveInfo();
-                dispose();
-                adminOptions frame = new adminOptions();
-                Global.frameSetup(frame);
+                saveInfo(currentGP.getID());
+                Return();
             }
         });
 
@@ -56,7 +62,6 @@ public class editGP extends JFrame{
                 }
                 String filename = f.getAbsolutePath();
                 photoAddress.setText(filename);
-                //BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
                 try {
                     image.setIcon(new ImageIcon(scaleImage(ImageIO.read(theImage))));
                 } catch (Exception e) {
@@ -71,26 +76,52 @@ public class editGP extends JFrame{
             }
         });
 
-
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                mainForm frame = new mainForm();
-                Global.frameSetup(frame);
+                logout();
             }
         });
         cancelAndReturnHomeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                adminOptions frame = new adminOptions();
-                Global.frameSetup(frame);
+                Return();
             }
         });
     }
 
-    private void saveInfo(){
+    private void logout() {
+        dispose();
+        mainForm frame = new mainForm();
+        Global.frameSetup(frame, this);
+    }
+
+    private void Return() {
+        dispose();
+        adminOptions frame = new adminOptions();
+        Global.frameSetup(frame, this);
+    }
+
+    private void fillExistingDetails(GP currentGP){
+        if(!currentGP.getName().equals(" ")){
+            textField1.setText(currentGP.getName());
+        }
+        if(!currentGP.getEmail().equals(" ")){
+            textField2.setText(currentGP.getEmail());
+        }
+        if(!currentGP.getPagerNum().equals(" ")){
+            textField3.setText(currentGP.getPagerNum());
+        }
+        if(!currentGP.getUserName().equals(" ")){
+            textField5.setText(currentGP.getUserName());
+        }
+        if(currentGP.getMedC()!=null){
+            medCentreBox.setSelectedItem(currentGP.getMedC().getName());
+        }
+
+    }
+
+    private void saveInfo(int id){
         String name = textField1.getText(); //Name
         String email = textField2.getText(); //Email
         String pagerNum = textField3.getText(); //Pager Number
@@ -102,8 +133,8 @@ public class editGP extends JFrame{
             JOptionPane.showMessageDialog(null, "Sorry, no medical centre with that name could be found!");
         }
         else{
-            GP nGP = new GP(name, email, medC, 0, theImage, pagerNum, username, Password);
-            nGP.save();
+            GP nGP = new GP(name, email, medC, id, pagerNum, username, Password);
+            nGP.save(theImage);
             //only saves the gp if valid medical centre entered
         }
 
@@ -128,7 +159,12 @@ public class editGP extends JFrame{
     }
 
     public static void main(String[] args) {
-        editGP frame = new editGP();
-        Global.frameSetup(frame);
+        GP nullGP = new GP(" ", " ", null, 0, " ", " ", " ");
+        editGP frame = new editGP(nullGP);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

@@ -31,15 +31,15 @@ public class DataAccess {
     /*===================================================================================================================================*/
     /*==============================                            PATIENT QUERIES                            ==============================*/
     /*===================================================================================================================================*/
-    public static void savePatient(@NotNull Patient input) throws SQLException {
+    public static void savePatient(@NotNull Patient input, InputStream pic) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "INSERT INTO patients "+
                 "(fullname, patientadd, emailadd, medicalcentre, phonenumber, dob, picture)" +
                 "values (?, ?, ?, ?, ?, ?, ?);";
         byte[] targetArray = new byte[0];
         try {
-            targetArray = new byte[input.getPicture().available()];
-            input.getPicture().read(targetArray);
+            targetArray = new byte[pic.available()];
+            pic.read(targetArray);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public class DataAccess {
         ps.executeUpdate();
     }
 
-    public static void updatePatient(@NotNull Patient input) throws SQLException {
+    public static void updatePatient(@NotNull Patient input, InputStream pic) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "Update patients SET " +
                 "fullname = ?,"+
@@ -64,25 +64,17 @@ public class DataAccess {
                 "medicalcentre = ?,"+
                 "phonenumber = ?,"+
                 "dob= ?, " +
-                "picture = ? " +
+                "picture = COALESCE(?, picture) " +
                 "WHERE id = ?;";
         byte[] targetArray = new byte[0];
-        /*
         try {
-            input.setPicture(new FileInputStream(new File("src/com/quad/ClientData/blank-profile-picture.png")));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-         */
-        try {
-            targetArray = new byte[input.getPicture().available()];
-            input.getPicture().read(targetArray);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            System.out.println( "Data Access "+ input.getPicture().available());
+            if (pic.available() == 0){
+                targetArray = null;
+            }
+            else {
+                targetArray = new byte[pic.available()];
+                pic.read(targetArray);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -95,15 +87,15 @@ public class DataAccess {
         ps.setString(5,input.getPhoneNum());
         ps.setDate(6, dateOB);
         ps.setBytes(7, targetArray);
-        //ps.setBinaryStream(7, input.getPicture());
         ps.setInt(8,input.getID());
         ps.executeUpdate();
     }
 
     public static ResultSet searchPatient(@NotNull Patient input, int pageNo) throws SQLException {
         Connection conn = DataAccess.connect();
+        //
         String query = "SELECT * from " +
-                "(SELECT *, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from patients " +
+                "(SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, medicalcentre.id, mcname, mcadd, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from patients " +
                 "INNER JOIN medicalcentre " +
                 "ON patients.medicalcentre = medicalcentre.id " +
                 "WHERE (fullname LIKE ? OR ? IS NULL)" +
@@ -166,7 +158,7 @@ public class DataAccess {
         return ps.executeQuery();
     }
 
-    public static InputStream refreshPatientPic(Patient input) throws SQLException {
+    public static InputStream getPatientPic(Patient input) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "Select picture from patients where id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
@@ -178,11 +170,18 @@ public class DataAccess {
     /*===================================================================================================================================*/
     /*==============================                              GP QUERIES                               ==============================*/
     /*===================================================================================================================================*/
-    public static void saveGP(@NotNull GP input) throws SQLException {
+    public static void saveGP(@NotNull GP input, InputStream pic) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "INSERT INTO gp " +
                 "(fullname, pagernum, emailadd, medicalcentreid, username, pswrd, picture) " +
                 "VALUES (?,?,?,?,?,?,?);";
+        byte[] targetArray = new byte[0];
+        try {
+            targetArray = new byte[pic.available()];
+            pic.read(targetArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,input.getName());
         ps.setString(2,input.getPagerNum());
@@ -190,31 +189,45 @@ public class DataAccess {
         ps.setInt(4,input.getMedC().getID());
         ps.setString(5,input.getUserName());
         ps.setString(6,input.getPassword());
-        ps.setBinaryStream(7, input.getPicture());
+        ps.setBytes(7, targetArray);
         ps.executeUpdate();
     }
 
-    public static void updateGP(@NotNull GP input) throws SQLException {
+    public static void updateGP(@NotNull GP input, InputStream pic) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "Update gp SET " +
                 "fullname = ?,"+
                 "emailadd = ?,"+
                 "pagernum = ?,"+
-                "medicalcentreid = ? " +
+                "medicalcentreid = ?, " +
+                "picture = COALESCE(?, picture) " +
                 "WHERE id = ?";
+        byte[] targetArray = new byte[0];
+        try {
+            if (pic.available() == 0){
+                targetArray = null;
+            }
+            else {
+                targetArray = new byte[pic.available()];
+                pic.read(targetArray);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,input.getName());
         ps.setString(2,input.getEmail());
         ps.setString(3,input.getPagerNum());
         ps.setInt(4,input.getMedC().getID());
-        ps.setInt(5,input.getID());
+        ps.setBytes(5, targetArray);
+        ps.setInt(6,input.getID());
         ps.executeUpdate();
     }
 
     public static ResultSet searchGP(@NotNull GP input, int pageNo) throws SQLException {
         Connection conn = DataAccess.connect();
-        String query =  "SELECT id, fullname, pagernum, username, emailadd, medicalcentre, mcname, mcadd, picture from " +
-                "(SELECT *, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from gp " +
+        String query =  "SELECT * from " +
+                "(SELECT gp.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from gp " +
                 "INNER JOIN medicalcentre " +
                 "ON gp.medicalcentreid = medicalcentre.id " +
                 "WHERE (fullname LIKE ? OR ? IS NULL)" +
@@ -235,9 +248,29 @@ public class DataAccess {
         return ps.executeQuery();
     }
 
+    public static ResultSet searchGPCount(@NotNull GP input) throws SQLException {
+        Connection conn = DataAccess.connect();
+        String query = "SELECT COUNT(id) from gp " +
+                "WHERE (fullname LIKE ? OR ? IS NULL)" +
+                "AND (pagernum LIKE ? OR ? IS NULL)" +
+                "AND (emailadd LIKE ? OR ? IS NULL)" +
+                "AND (username LIKE ? OR ? IS NULL)";
+
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,"%"+input.getName()+"%");
+        ps.setString(2,input.getName());
+        ps.setString(3,"%"+input.getPagerNum()+"%");
+        ps.setString(4,input.getPagerNum());
+        ps.setString(5,"%"+input.getEmail()+"%");
+        ps.setString(6,input.getEmail());
+        ps.setString(7,"%"+input.getUserName()+"%");
+        ps.setString(8,input.getUserName());
+        return ps.executeQuery();
+    }
+
     public static boolean GPLogin(String Username, @NotNull String Password) throws SQLException {
         Connection conn = DataAccess.connect();
-        String query = "SELECT gp.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd, picture from gp " +
+        String query = "SELECT gp.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd from gp " +
                 "INNER JOIN medicalcentre " +
                 "ON gp.medicalcentreid = medicalcentre.id " +
                 "WHERE username = ? AND pswrd = ?;";
@@ -256,14 +289,13 @@ public class DataAccess {
             String mcName = rs.getString(7);
             String mcAdd = rs.getString(8);
             MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
-            InputStream picIn = new ByteArrayInputStream(rs.getBytes(9));
-            GP gpActive = new GP(nameIn, emailIn, MedCIn, idIn, picIn, pagNumIn, usernameIn, "n/a");
+            GP gpActive = new GP(nameIn, emailIn, MedCIn, idIn, pagNumIn, usernameIn, "n/a");
             Global.ActiveGP = gpActive;
         }
         return validLogin;
     }
 
-    public static InputStream refreshGPPic(GP input) throws SQLException {
+    public static InputStream getGPPic(GP input) throws SQLException {
         Connection conn = DataAccess.connect();
         String query = "Select picture from gp where id = ?";
         PreparedStatement ps = conn.prepareStatement(query);

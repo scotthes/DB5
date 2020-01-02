@@ -23,20 +23,34 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="2d160047-79d0-49f5-bb9b-94195cfaee5d">
+        <schema name="pg_catalog" object-types="function, table, view" />
+        <schema name="public" object-types="function, table, view, column" />
+      </connection>
+      <connection connection-id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
+        <schema name="information_schema" object-types="function, table, view, sequence" />
+        <schema name="pg_catalog" object-types="function, table, index, view, column, sequence, constraint, dataset trigger" />
+        <schema name="pg_temp_1" object-types="function, table, view, sequence" />
+        <schema name="pg_toast" object-types="function, table, view, sequence" />
+        <schema name="pg_toast_temp_1" object-types="function, table, view, sequence" />
+        <schema name="public" object-types="function, table, view, column, sequence" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="2d160047-79d0-49f5-bb9b-94195cfaee5d">
       <console name="postgres" type="STANDARD" schema="public" session="Main">CREATE TABLE public.patients(
 id SERIAL PRIMARY KEY,
 fullname varchar(128) NOT NULL,
-phonenumber varchar(64) NOT NULL,
+phonenumber varchar(64) NOT NULL, 
 emailadd varchar (150) NOT NULL,
 medicalcentre int NOT NULL,
-patientadd varchar(256) NOT NULL,
-dob date NOT NULL)
+patientadd varchar(256) NOT NULL, 
+dob date NOT NULL,
+picture bytea)
 
-DROP TABLE public.patients;
+drop table public.gp;
 
 CREATE TABLE public.gp(
 id SERIAL PRIMARY KEY,
@@ -45,10 +59,97 @@ pagernum varchar(32) NOT NULL,
 emailadd varchar (128) NOT NULL,
 medicalcentreid int NOT NULL,
 username varchar(32) NOT NULL,
-pswrd varchar(32) NOT NULL
+pswrd varchar(32) NOT NULL,
+picture bytea
 )
 
-DROP TABLE public.gp;
+SELECT * FROM public.gp
+
+INSERT INTO public.patients (fullname, emailadd, medicalcentre, phonenumber, patientadd, dob) 
+values ('john smit', 'john@smit.net', '1', '07523543123', '123 fakestreet', '1974-03-12');
+
+SELECT * from public.patients order by id;
+
+SELECT * from
+(SELECT *,ROW_NUMBER() OVER (ORDER BY id) as rownum FROM public.patients
+where (fullname LIKE ('%john%') OR '' IS NULL)
+AND (phonenumber LIKE ('%%') OR '' IS NULL)
+AND (emailadd LIKE ('%%') OR '' IS NULL)
+AND (patientadd LIKE ('%%') OR '' IS NULL)
+AND (dob = NULL OR NULL is NULL)) as foo
+where rownum&gt;0 LIMIT 10;
+
+PREPARE countResults(text, text, text, text, date) AS
+SELECT COUNT(id) FROM public.patients
+where (fullname LIKE $1 OR $1 IS NULL)
+AND (phonenumber LIKE $2 OR $2 IS NULL)
+AND (emailadd LIKE $3 OR $3 IS NULL)
+AND (patientadd LIKE $4 OR $4 IS NULL)
+AND (dob = $5 OR $5 is NULL);
+EXECUTE countResults('%john%','%%','%%','%%', NULL);
+
+
+DEALLOCATE updatePatient;
+PREPARE updatePatient(text, text, text, int, text, date, int) AS
+    update public.patients SET
+        fullname = COALESCE($1, fullname),
+        patientadd = COALESCE($2, patientadd),
+        emailadd = COALESCE($3, emailadd),
+        medicalcentre = COALESCE($4, medicalcentre),
+        phonenumber = COALESCE($5, phonenumber),
+        dob = COALESCE($6, dob)
+        WHERE id = $7;
+EXECUTE updatePatient('Jason', '231312 Utopia Land 2019', 'Ja@so.n', '1','073213123123', '2019-5-20', 15 );
+
+DEALLOCATE insertpatient;
+PREPARE insertpatient (text,text,text,int,text,date) AS
+	INSERT INTO public.patients (fullname, patientadd, emailadd, medicalcentre, phonenumber, dob)
+	VALUES ($1, $2, $3, $4, $5, $6)
+EXECUTE insertpatient('Jane Smith','123 Fakestraat','Jane@SMith.net', '1','07598724769','1987-06-05');
+
+DEALLOCATE searchpatient;
+PREPARE searchPatient(int,text, text, text, text, date) AS
+	SELECT * from
+	(SELECT *, ROW_NUMBER() OVER (ORDER by patients.id) as RowNumber from public.patients
+	INNER JOIN public.medicalcentre
+	ON public.patients.medicalcentre = public.medicalcentre.id
+	WHERE (fullname LIKE $2 OR $2 IS NULL)
+	AND (patientadd LIKE $3 OR $3 IS NULL)
+	AND (emailadd LIKE $4 OR $4 IS NULL)
+	AND (phonenumber LIKE $5 OR $5 IS NULL)
+	AND ($6 IS NULL or dob = $6)) as abc where RowNumber &gt; $1 LIMIT 10;
+EXECUTE searchPatient(0, '%%', '%%', '%%', '%%', NULL);
+
+SELECT COUNT(id) from patients
+                WHERE (fullname LIKE 'j' OR '' IS NULL)
+                AND (patientadd LIKE '' OR '' IS NULL)
+                AND (emailadd LIKE '' OR '' IS NULL)
+                AND (phonenumber LIKE '' OR '' IS NULL);</console>
+    </connection>
+    <connection id="965b96ca-3b33-49f7-8e13-ff62afcec5d5">
+      <console name="Connection" type="STANDARD" schema="" session="Main" />
+    </connection>
+    <connection id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
+      <console name="nhsDatabase" type="STANDARD" schema="public" session="Main"><![CDATA[CREATE TABLE public.gp(
+id SERIAL PRIMARY KEY,
+fullname varchar(128) NOT NULL,
+pagernum varchar(32) NOT NULL,
+emailadd varchar(128) NOT NULL,
+medicalcentreid int NOT NULL,
+username varchar(32) NOT NULL,
+pswrd varchar(32) NOT NULL,
+picture bytea
+)
+
+CREATE TABLE public.patients(
+id SERIAL PRIMARY KEY,
+fullname varchar(128) NOT NULL,
+phonenumber varchar(64) NOT NULL, 
+emailadd varchar(128) NOT NULL,
+medicalcentre int NOT NULL,
+patientadd varchar(256) NOT NULL, 
+dob date NOT NULL,
+picture bytea)
 
 CREATE TABLE public.medicalcentre(
 id SERIAL PRIMARY KEY,
@@ -56,14 +157,129 @@ mcname varchar(256) NOT NULL,
 mcadd varchar(512) NOT NULL
 )
 
-INSERT INTO public.medicalcentre (mcname, mcadd)
-values ('Hammersmith', 'Somewhere in Hammersmith presumably');</console>
-    </connection>
-    <connection id="965b96ca-3b33-49f7-8e13-ff62afcec5d5">
-      <console name="Connection" type="STANDARD" schema="" session="Main" />
-    </connection>
-    <connection id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
-      <console name="nhsDatabase" type="STANDARD" schema="" session="Main" />
+CREATE TABLE public.casereports(
+id SERIAL PRIMARY KEY,
+patientid int NOT NULL,
+gpid int NOT NULL,
+condition varchar(128),
+chronic boolean
+)
+
+
+drop table public.medication;
+CREATE TABLE public.medication(
+id SERIAL PRIMARY KEY,
+medname varchar(128) NOT NULL,
+startdate date,
+duration int NOT NULL,
+usagenotes varchar(512) NOT NULL,
+casereportid int NOT NULL
+)
+
+CREATE TABLE public.notes(
+id SERIAL PRIMARY KEY,
+notedate date,
+note varchar(2048),
+casereportid int NOT NULL
+)
+
+Select * from public.medicalcentre
+Select * from public.patients
+delete from public.patients where id=2;
+select * from public.gp
+
+select * from public.casereports
+select * from public.notes
+select * from public.medication
+
+SELECT gp.id, fullname, pagernum, emailadd, medicalcentreid, username, pswrd, medicalcentre.id, mcname, mcadd from gp
+                INNER JOIN medicalcentre
+                ON gp.medicalcentreid = medicalcentre.id
+
+SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, medicalcentre.id, mcname, mcadd from patients
+                INNER JOIN medicalcentre
+                ON patients.medicalcentre = medicalcentre.id
+                
+                SELECT tstamp, patient_history.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, medicalcentre.id, mcname, mcadd from patient_history
+                INNER JOIN medicalcentre
+                ON patient_history.medicalcentre = medicalcentre.id
+
+SELECT * from
+       (SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, medicalcentre.id, mcname, mcadd, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from patients
+       INNER JOIN medicalcentre
+       ON patients.medicalcentre = medicalcentre.id) as foo
+   where RowNumber>0 order by 1 limit 10;
+
+drop table patient_history
+CREATE TABLE patient_history (
+	tstamp timestamp,
+    id int,
+    fullname text,
+    phonenumber text, 
+    emailadd text,
+    medicalcentre int,
+    patientadd text, 
+    dob date,
+    picture bytea
+);
+
+
+CREATE OR REPLACE FUNCTION process_patient_history() RETURNS TRIGGER AS $patient_history$
+    BEGIN
+       	IF (TG_OP = 'UPDATE') THEN
+	INSERT INTO patient_history SELECT now(), OLD.*;
+	RETURN OLD;
+        END IF;
+        RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+$patient_history$ LANGUAGE plpgsql;
+
+CREATE TRIGGER patient_history
+AFTER UPDATE ON patients
+    FOR EACH ROW EXECUTE PROCEDURE process_patient_history();
+
+Update patients SET
+                fullname = 'NoName Mgee 3',
+                patientadd = 'Somewhere even more warm',
+                emailadd = 'yeah'
+                WHERE id = 5;
+
+CREATE TABLE gp_history(
+	tstamp		timestamp,
+id int,
+fullname varchar(128),
+pagernum varchar(32),
+emailadd varchar (128),
+medicalcentreid int,
+username varchar(32),
+pswrd varchar(32),
+picture bytea
+);
+
+
+CREATE OR REPLACE FUNCTION process_gp_history() RETURNS TRIGGER AS $gp_history$
+    BEGIN
+       	IF (TG_OP = 'UPDATE') THEN
+	INSERT INTO gp_history SELECT now(), OLD.*;
+	RETURN OLD;
+        END IF;
+        RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+$gp_history$ LANGUAGE plpgsql;
+
+DROP TRIGGER gp_history ON patients
+
+CREATE TRIGGER gp_history
+AFTER UPDATE ON gp
+    FOR EACH ROW EXECUTE PROCEDURE process_gp_history();
+
+Update gp SET
+                fullname = 'Henners with a z'
+                WHERE id = 1;
+
+SELECT tstamp, gp_history.id, fullname, pagernum, emailadd, medicalcentreid, username, pswrd, medicalcentre.id, mcname, mcadd from gp_history
+                INNER JOIN medicalcentre
+                ON gp_history.medicalcentreid = medicalcentre.id]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -481,22 +697,12 @@ values ('Hammersmith', 'Somewhere in Hammersmith presumably');</console>
           <content-type name="DTD" enabled="true" />
           <content-type name="HTML" enabled="true" />
           <content-type name="XHTML" enabled="true" />
-          <content-type name="CSS" enabled="true" />
           <content-type name="Java" enabled="true" />
           <content-type name="SQL" enabled="true" />
           <content-type name="PL/SQL" enabled="true" />
-          <content-type name="JavaScript" enabled="true" />
-          <content-type name="JSP" enabled="true" />
-          <content-type name="JSPx" enabled="true" />
           <content-type name="Groovy" enabled="true" />
-          <content-type name="FTL" enabled="true" />
-          <content-type name="TML" enabled="true" />
-          <content-type name="GSP" enabled="true" />
-          <content-type name="ASP" enabled="true" />
-          <content-type name="VTL" enabled="true" />
           <content-type name="AIDL" enabled="true" />
           <content-type name="YAML" enabled="true" />
-          <content-type name="Flex" enabled="true" />
           <content-type name="Manifest" enabled="true" />
         </content-types>
       </qualified-text-editor>

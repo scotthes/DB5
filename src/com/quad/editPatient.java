@@ -40,27 +40,17 @@ public class editPatient extends JFrame {
         setContentPane(newPatientPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        int id = currentPatient.getID();
-        chosenImage = currentPatient.getPicture();
+        chosenImage = InputStream.nullInputStream();
         try {
-            System.out.println("edit patient before Icon " + currentPatient.getName() + ": "+ currentPatient.getPicture().available());
-            image.setIcon(new ImageIcon(scaleImage(ImageIO.read(chosenImage))));
-            System.out.println("edit patient after Icon" + currentPatient.getName() + ": "+ currentPatient.getPicture().available());
+            image.setIcon(new ImageIcon(scaleImage(ImageIO.read(currentPatient.getPicture()))));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (id!=0) {
-            currentPatient.refreshPic();
-        }
-        chosenImage = currentPatient.getPicture();
-
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                saveInfo(id);
-                dispose();
-                adminOptions frame = new adminOptions();
-                Global.frameSetup(frame);
+                saveInfo(currentPatient.getID());
+                Return();
             }
         });
 
@@ -95,20 +85,28 @@ public class editPatient extends JFrame {
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                mainForm frame = new mainForm();
-                Global.frameSetup(frame);
+                logout();
             }
         });
 
         cancelAndReturnHomeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                adminOptions frame = new adminOptions();
-                Global.frameSetup(frame);
+                Return();
             }
         });
+    }
+
+    private void logout() {
+        dispose();
+        mainForm frame = new mainForm();
+        Global.frameSetup(frame, this);
+    }
+
+    private void Return() {
+        dispose();
+        adminOptions frame = new adminOptions();
+        Global.frameSetup(frame, this);
     }
 
     private static BufferedImage scaleImage(BufferedImage img) throws Exception {
@@ -133,17 +131,12 @@ public class editPatient extends JFrame {
         String bDay = year+" "+month+" "+day;
         MedCentre medC = new MedCentre((String) medCentreBox.getSelectedItem(), "", 0); //Med Centre
         medC = medC.search();
-        try {
-            System.out.println("edit patient save " + name + ": "+ chosenImage.available());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         if (medC.getID()==0){
             JOptionPane.showMessageDialog(null, "Sorry, there is no medical centre with that name!");//ERROR NO MED CENTRE FOUND W/E
         }
         else{
-            Patient pNew= new Patient(name, email, medC, id, chosenImage, phoneNum, address, bDay);
-            pNew.save();
+            Patient pNew= new Patient(name, email, medC, id, phoneNum, address, bDay);
+            pNew.save(chosenImage);
             //only saves the patient if a valid medical centre was entered
         }
     }
@@ -174,7 +167,6 @@ public class editPatient extends JFrame {
         if(currentPatient.getMedC()!=null){
             medCentreBox.setSelectedItem(currentPatient.getMedC().getName());
         }
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d");
         dayBox.setSelectedItem(dtf.format(currentPatient.getDOBDate()));
         dtf = DateTimeFormatter.ofPattern("MMMM");
@@ -184,8 +176,12 @@ public class editPatient extends JFrame {
     }
 
     public static void main(String[] args) {
-        editPatient frame = new editPatient(new Patient(" "," ",null,0, null," "," "," "));
-        Global.frameSetup(frame);
+        editPatient frame = new editPatient(new Patient(" "," ",null,0, " "," "," "));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
 }

@@ -22,27 +22,33 @@ public class newCentre extends JFrame{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 saveInfo();
-                dispose();
-                adminOptions frame = new adminOptions();
-                Global.frameSetup(frame);
+                Return();
             }
         });
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                mainForm frame = new mainForm();
-                Global.frameSetup(frame);
+                logout();
             }
         });
         cancelAndReturnHomeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dispose();
-                adminOptions frame = new adminOptions();
-                Global.frameSetup(frame);
+                Return();
             }
         });
+    }
+
+    private void logout() {
+        dispose();
+        mainForm frame = new mainForm();
+        Global.frameSetup(frame, this);
+    }
+
+    private void Return() {
+        dispose();
+        adminOptions frame = new adminOptions();
+        Global.frameSetup(frame, this);
     }
 
     private void saveInfo(){
@@ -54,6 +60,10 @@ public class newCentre extends JFrame{
 
     public static void main(String[] args) {
         newCentre frame = new newCentre();
-        Global.frameSetup(frame);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }
