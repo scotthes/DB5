@@ -23,8 +23,13 @@ public class patientSearch extends JFrame {
     private JComboBox comboBox1;
     private JComboBox comboBox2;
     private JComboBox comboBox3;
+    private JLabel titleLabel;
+    private JButton goBackButton;
 
     patientSearch(int type){
+        if (type == 2){
+            titleLabel.setText("GP Search");
+        }
         setContentPane(optionsGPPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -40,12 +45,29 @@ public class patientSearch extends JFrame {
                 logout();
             }
         });
+        goBackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dispose();
+                if (type == 0){
+                    logout();
+                }
+                else if (type == 1 | type == 2){
+                    adminHome();
+                }
+            }
+        });
     }
 
     private void logout() {
         dispose();
         mainForm frame = new mainForm();
         Global.frameSetup(frame, this);
+    }
+
+    private void adminHome(){
+        adminOptions frame = new adminOptions();
+        Global.frameSetup(frame,this);
     }
 
     private void search(int type){

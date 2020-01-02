@@ -36,6 +36,7 @@ public class newReport extends JFrame{
     private InputStream chosenImage;
 
     newReport(Patient currentPatient) {
+        caseNotesInput.setLineWrap(true); //Allow textfield input to wrap
         p = currentPatient;
         gp = Global.ActiveGP;
         titleLabel.setText(String.format("New Case Report For %s" , p.getName()));

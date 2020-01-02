@@ -2,7 +2,6 @@ package com.quad;
 
 import com.quad.ClientData.GP;
 import com.quad.ClientData.MedCentre;
-import com.quad.ClientData.Patient;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.time.format.DateTimeFormatter;
 
 public class editGP extends JFrame{
     private JTextField textField1;
@@ -28,8 +26,12 @@ public class editGP extends JFrame{
     private JComboBox<String> medCentreBox;
     private JButton logoutButton;
     private JButton cancelAndReturnHomeButton;
+    private JLabel titleLabel;
+    private JButton reportsButton;
     private InputStream theImage;
+
     editGP(GP currentGP){
+        reportsButton.setVisible(false);
         setupComboBox();
         fillExistingDetails(currentGP);
         setContentPane(GPPanel);
@@ -88,6 +90,12 @@ public class editGP extends JFrame{
                 Return();
             }
         });
+        reportsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
     }
 
     private void logout() {
@@ -104,7 +112,10 @@ public class editGP extends JFrame{
 
     private void fillExistingDetails(GP currentGP){
         if(!currentGP.getName().equals(" ")){
+            titleLabel.setText(currentGP.getName());
             textField1.setText(currentGP.getName());
+            textField6.setText("DO NOT CHANGE");
+            reportsButton.setVisible(true);
         }
         if(!currentGP.getEmail().equals(" ")){
             textField2.setText(currentGP.getEmail());
