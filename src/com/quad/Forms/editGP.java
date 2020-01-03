@@ -75,9 +75,16 @@ public class editGP extends JFrame{
         reportsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                Global.ActiveGP=currentGP;
+                goReports();
             }
         });
+    }
+
+    private void goReports(){
+        patientHome frame = new patientHome();
+        Global.frameSetup(frame, this);
+        dispose();
     }
 
     private void logout() {

@@ -24,7 +24,7 @@ public class reportsList extends JFrame {
     private ArrayList<String> reportsTitles = new ArrayList<>();
 
     reportsList(){
-        reports = Global.ActivePatient.loadCaseReports(0);
+        reports = Global.ActivePatient.loadCaseReports();
         for (CaseReport report : reports) {
             String title = report.getCondition() + "  | Last Modified: " + report.getLastModifiedString();
             reportsTitles.add(title); //will want to also add date

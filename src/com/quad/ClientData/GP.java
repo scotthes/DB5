@@ -74,4 +74,7 @@ public class GP extends Person {
         }
         return null;
     }
+    public ArrayList<CaseReport> loadCaseReports(){
+        return DataAccess.searchCaseReport(0, this.getID());
+    }
 }

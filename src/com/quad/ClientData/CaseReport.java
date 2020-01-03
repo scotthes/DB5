@@ -68,6 +68,8 @@ public class CaseReport {
 
     public void loadNotes(){
         Notes = DataAccess.loadNotes(this.getCaseID());
+        Note nullNote = new Note(LocalDateTime.now(), "", this.getCaseID());
+        Notes.add(0, nullNote);
     }
 
     public Note getNote(int index){
@@ -90,7 +92,16 @@ public class CaseReport {
         return Medications.size();
     }
 
+    public String getPatientName(){
+        return DataAccess.getPatientName(this.getPatientID());
+    }
+
     public void save(){
+        if (this.getCaseID() == 0){
             CaseID = DataAccess.saveCaseReport(this);
+        }
+        else {
+            DataAccess.updateCaseReport(this);
+        }
     }
 }

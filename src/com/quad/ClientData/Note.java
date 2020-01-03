@@ -2,14 +2,14 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Note {
-    private LocalDate Date;
+    private LocalDateTime Date;
     private String Text;
     private int CaseID;
-    public Note(LocalDate date,
+    public Note(LocalDateTime date,
                 String text,
                 int caseID){
         Date = date;
@@ -17,10 +17,18 @@ public class Note {
         CaseID = caseID;
     }
 
-    public LocalDate getDate(){
+    public LocalDateTime getDate(){
         return Date;
     }
 
+    public String getDateString(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-d | HH:mm:ss");
+        return dtf.format(Date);
+    }
+
+    public void setText(String newText) {
+        Text = newText;
+    }
 
     public int getCaseID() {
         return CaseID;
@@ -29,10 +37,6 @@ public class Note {
         return Text;
     }
     public void save(){
-        try {
-            DataAccess.saveNote(this);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        DataAccess.saveNote(this);
     }
 }

@@ -48,8 +48,8 @@ public class Patient extends Person {
         return dtf.format(DateOfBirth);
     }
 
-    public ArrayList<CaseReport> loadCaseReports(int pageNo){
-        return DataAccess.searchCaseReport(this.getID(), 0, pageNo);
+    public ArrayList<CaseReport> loadCaseReports(){
+        return DataAccess.searchCaseReport(this.getID(), 0);
     }
 
     public void save(InputStream pic){

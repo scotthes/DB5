@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -233,6 +234,30 @@ public class DataAccess {
             try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return pic;
+    }
+
+    public static String getPatientName(int PatID){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String name = "";
+        try{
+            conn = DataAccess.connect();
+            String query = "Select fullname from patients where id = ?";
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, PatID);
+            rs = ps.executeQuery();
+            boolean k = rs.next();
+            name = rs.getString("fullname");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
+        return name;
+
     }
     /*===================================================================================================================================*/
     /*==============================                              GP QUERIES                               ==============================*/
@@ -574,7 +599,33 @@ public class DataAccess {
         return returnID;
     }
 
-    public static ArrayList<CaseReport> searchCaseReport(int patientID, int GPID, int pageNo) {
+    public static void updateCaseReport(@NotNull CaseReport input) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DataAccess.connect();
+            String query = "UPDATE casereports SET " +
+                    "patientid = ?, " +
+                    "gpid = ?, " +
+                    "condition = ?, " +
+                    "chronic = ? " +
+                    "where  id = ?;"; //Also not an error
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, input.getPatientID());
+            ps.setInt(2, input.getGPID());
+            ps.setString(3, input.getCondition());
+            ps.setBoolean(4, input.getChronic());
+            ps.setInt(5, input.getCaseID());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
+    }
+
+    public static ArrayList<CaseReport> searchCaseReport(int patientID, int GPID) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -588,12 +639,10 @@ public class DataAccess {
                     "inner join notes on casereports.id=notes.casereportid " +
                     "WHERE (patientid = ?) " +
                     "OR (gpid = ?)) foo " +
-                    "WHERE Rownumber > ? " +
-                    "ORDER BY notedate desc LIMIT 5;";
+                    "ORDER BY notedate desc;";
             ps = conn.prepareStatement(query);
             ps.setInt(1, patientID);
             ps.setInt(2, GPID);
-            ps.setInt(3, 5 * pageNo);
             rs = ps.executeQuery();
             while (rs.next()) {
                 String condition = rs.getString("condition");
@@ -620,7 +669,7 @@ public class DataAccess {
     /*===================================================================================================================================*/
     /*==============================                             NOTE QUERIES                              ==============================*/
     /*===================================================================================================================================*/
-    public static void saveNote(@NotNull Note input) throws SQLException {
+    public static void saveNote(@NotNull Note input) {
         Connection conn = null;
         PreparedStatement ps = null;
 
@@ -630,8 +679,8 @@ public class DataAccess {
                     "(notedate, note, casereportid)" +
                     "VALUES (?,?,?);";
             ps = conn.prepareStatement(query);
-            Date date = Date.valueOf(input.getDate());
-            ps.setDate(1, date);
+            Timestamp tStamp = Timestamp.valueOf(input.getDate()); //saves date AND time
+            ps.setTimestamp(1, tStamp);
             ps.setString(2, input.getText());
             ps.setInt(3, input.getCaseID());
             ps.executeUpdate();
@@ -652,13 +701,14 @@ public class DataAccess {
             conn = DataAccess.connect();
             String query = "SELECT notedate, note from notes " +
                     "WHERE (casereportid = ?)" +
-                    "ORDER BY notedate DESC;";
+                    "ORDER BY id DESC;";
             ps = conn.prepareStatement(query);
             ps.setInt(1, caseID);
             rs = ps.executeQuery();
             while (rs.next()) {
-                LocalDate date = rs.getDate("notedate").toLocalDate();
-                String noteText = rs.getString("note");
+                LocalDateTime date = rs.getTimestamp("notedate").toLocalDateTime();
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-d | HH:mm:ss");
+                String noteText = "( " + dtf.format(date) + " ): " + rs.getString("note");
                 Note newNote = new Note(date, noteText, caseID);
                 results.add(newNote);
             }
@@ -675,19 +725,28 @@ public class DataAccess {
     /*===================================================================================================================================*/
     /*==============================                          MEDICATION QUERIES                           ==============================*/
     /*===================================================================================================================================*/
-    public static void saveMedication(@NotNull Medication input) throws SQLException {
-        Connection conn = DataAccess.connect();
-        String query = "INSERT INTO medication" +
-                "(medname, startdate, duration, usagenotes, casereportid)" +
-                "VALUES (?,?,?,?,?);";
-        PreparedStatement ps = conn.prepareStatement(query);
-        Date startDate = Date.valueOf(input.getStartDate());
-        ps.setString(1,input.getName());
-        ps.setDate(2,startDate);
-        ps.setInt(3,input.getDuration());
-        ps.setString(4,input.getUsageNotes());
-        ps.setInt(5,input.getCaseID());
-        ps.executeUpdate();
+    public static void saveMedication(@NotNull Medication input) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DataAccess.connect();
+            String query = "INSERT INTO medication" +
+                    "(medname, startdate, duration, usagenotes, casereportid)" +
+                    "VALUES (?,?,?,?,?);";
+            ps = conn.prepareStatement(query);
+            Date startDate = Date.valueOf(input.getStartDate());
+            ps.setString(1, input.getName());
+            ps.setDate(2, startDate);
+            ps.setInt(3, input.getDuration());
+            ps.setString(4, input.getUsageNotes());
+            ps.setInt(5, input.getCaseID());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
     }
     public static ResultSet searchMedAll(int caseID, int pageNo) throws SQLException {
         Connection conn = DataAccess.connect();
@@ -718,7 +777,7 @@ public class DataAccess {
             conn = DataAccess.connect();
             String query = "SELECT * FROM medication " +
                     "WHERE (casereportid = ?) " +
-                    "ORDER BY startdate DESC;";
+                    "ORDER BY id DESC;";
             ps = conn.prepareStatement(query);
             ps.setInt(1, caseID);
             rs = ps.executeQuery();

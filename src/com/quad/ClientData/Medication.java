@@ -43,11 +43,19 @@ public class Medication {
         return CaseID;
     }
 
-    public void save() {
-        try {
-            DataAccess.saveMedication(this);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public boolean equals(Medication test){
+        if ((this.getStartDate() == test.getStartDate()) &&
+                (this.getDuration() == test.getDuration()) &&
+                (this.getName() == test.getName()) &&
+                (this.getUsageNotes().equals(test.getUsageNotes()))){
+            return true;
         }
+        else {
+            return false;
+        }
+    }
+
+    public void save() {
+        DataAccess.saveMedication(this);
     }
 }

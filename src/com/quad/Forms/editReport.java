@@ -32,6 +32,7 @@ public class editReport extends JFrame{
     private JLabel image;
     private boolean isChronic;
     private InputStream chosenImage;
+    private int commentsIterator;
 
     editReport(CaseReport caseR) {
         caseNotesInput.setLineWrap(true); //Allow textfield input to wrap
@@ -51,16 +52,26 @@ public class editReport extends JFrame{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(isConditionChronic()){
-                    saveInfo();
+                    if (Global.ActivePatient.getID()!=0){
+                        saveInfo(caseR);
+                    } //does not save edits if no active patient - this is when an admin is viewing case reports
                     goBack();
                 }
             }
         });
 
+        commentsIterator = 0;
         prevComButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //BUTTON FOR HENRY... NOT SURE HOW TO DO THIS REALLY
+                if (commentsIterator == 0){
+                    caseR.getNote(0).setText(caseNotesInput.getText());
+                }
+                commentsIterator++;
+                if (commentsIterator == caseR.getNotesSize()){
+                    commentsIterator = 0;
+                }
+                fillComments(caseR.getNote(commentsIterator));
             }
         });
 
@@ -73,22 +84,25 @@ public class editReport extends JFrame{
         });
     }
 
-    private void saveInfo(){
-        CaseReport newCR = new CaseReport("", Global.ActiveGP.getID(), Global.ActivePatient.getID(), 0);
-        if (isChronic != newCR.getChronic()){
-            newCR.setChronic(isChronic);
+    private void saveInfo(CaseReport caseR){
+        CaseReport CR = new CaseReport(conditionText.getText(), Global.ActiveGP.getID(), Global.ActivePatient.getID(), caseR.getCaseID());
+        if (isChronic != CR.getChronic()){
+            CR.setChronic(isChronic);
         }
-        newCR.save();
+        CR.save();
 
-        LocalDate now = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
         String noteText = caseNotesInput.getText();
-        Note note = new Note(now, noteText, newCR.getCaseID());
+        Note note = new Note(now, noteText, CR.getCaseID());
         note.save();
 
+        LocalDate now2 = LocalDate.now();
         String medName = medInput.getText();
         int duration = Integer.parseInt(durationInput.getText());
-        Medication med = new Medication(medName, now, duration, "", newCR.getCaseID());
-        med.save();
+        Medication med = new Medication(medName, now2, duration, "", CR.getCaseID());
+        if(!med.equals(caseR.getMed(0))){
+            med.save();
+        }
     }
 
     private boolean isConditionChronic(){

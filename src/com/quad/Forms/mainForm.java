@@ -1,5 +1,7 @@
 package com.quad.Forms;
 
+import com.quad.ClientData.GP;
+import com.quad.ClientData.Patient;
 import com.quad.DataAccess;
 import com.quad.Global;
 
@@ -20,6 +22,8 @@ public class mainForm extends JFrame {
         setContentPane(panel1);
         getRootPane().setDefaultButton(logInButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        Global.ActiveGP = new GP(" ", " ", null, 0, " ", " ", " ");
+        Global.ActivePatient = new Patient(" "," ",null,0," "," ","1915 January 1");
         logInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
