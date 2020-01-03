@@ -1,6 +1,7 @@
-package com.quad;
+package com.quad.Forms;
 
 import com.quad.ClientData.MedCentre;
+import com.quad.Global;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

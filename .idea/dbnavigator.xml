@@ -23,20 +23,11 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes>
-      <connection connection-id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
-        <schema name="information_schema" object-types="sequence, function, table, view" />
-        <schema name="pg_catalog" object-types="constraint, sequence, index, function, table, view, column, dataset trigger" />
-        <schema name="pg_temp_1" object-types="sequence, function, table, view" />
-        <schema name="pg_toast" object-types="sequence, function, table, view" />
-        <schema name="pg_toast_temp_1" object-types="sequence, function, table, view" />
-        <schema name="public" object-types="sequence, function, table, view, column" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="2d160047-79d0-49f5-bb9b-94195cfaee5d">
-      <console name="postgres" type="STANDARD" schema="public" session="Main">CREATE TABLE public.patients(
+      <console name="postgres" type="STANDARD" schema="public" session="Main"><![CDATA[CREATE TABLE public.patients(
 id SERIAL PRIMARY KEY,
 fullname varchar(128) NOT NULL,
 phonenumber varchar(64) NOT NULL,
@@ -66,7 +57,7 @@ mcadd varchar(512) NOT NULL
 )
 
 INSERT INTO public.medicalcentre (mcname, mcadd)
-values ('Hammersmith', 'Somewhere in Hammersmith presumably');</console>
+values ('Hammersmith', 'Somewhere in Hammersmith presumably');]]></console>
     </connection>
     <connection id="965b96ca-3b33-49f7-8e13-ff62afcec5d5">
       <console name="Connection" type="STANDARD" schema="" session="Main" />

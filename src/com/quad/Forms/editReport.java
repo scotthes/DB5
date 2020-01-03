@@ -1,13 +1,12 @@
-package com.quad;
+package com.quad.Forms;
 
 import com.quad.ClientData.*;
+import com.quad.Global;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,7 +14,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class newReport extends JFrame{
+public class editReport extends JFrame{
     private JTextArea caseNotesInput;
     private JCheckBox yesCheckBox;
     private JCheckBox noCheckBox;
@@ -26,7 +25,7 @@ public class newReport extends JFrame{
     private JTextField durationInput;
     private JTextField conditionText;
     private JTextField textField1;
-    private JButton seePreviousCaseReportsButton;
+    private JButton prevComButton;
     private JTextField textField2;
     private JButton browseButton;
     private JLabel image;
@@ -35,10 +34,13 @@ public class newReport extends JFrame{
     private boolean isChronic;
     private InputStream chosenImage;
 
-    newReport(Patient currentPatient) {
+    editReport(Patient currentPatient, int type) {
         caseNotesInput.setLineWrap(true); //Allow textfield input to wrap
         p = currentPatient;
         gp = Global.ActiveGP;
+        if (type == 0){
+            prevComButton.setVisible(false); //Do not display the previous comments button if it is a new report
+        }
         titleLabel.setText(String.format("New Case Report For %s" , p.getName()));
         setContentPane(newReportPanel);
         getRootPane().setDefaultButton(OKButton);
@@ -53,10 +55,10 @@ public class newReport extends JFrame{
             }
         });
 
-        seePreviousCaseReportsButton.addActionListener(new ActionListener() {
+        prevComButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                //BUTTON FOR HENRY... NOT SURE HOW TO DO THIS REALLY
             }
         });
 
@@ -64,51 +66,9 @@ public class newReport extends JFrame{
         browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.showOpenDialog(null);
-                        File f = chooser.getSelectedFile();
-                        try {
-                            chosenImage = new FileInputStream(f);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        String filename = f.getAbsolutePath();
-                        textField2.setText(filename);
-                        //BufferedImage theImage = null; //HENRY LOOK INTO SAVING THIS TO SQL
-                        try {
-                            image.setIcon(new ImageIcon(scaleImage(ImageIO.read(chosenImage))));
-                        } catch (Exception e) {
-                            e.getMessage();
-                        }
-                        try {
-                            chosenImage = new FileInputStream(f);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        System.out.println("Images were written succesfully.");
+                        imageUpload();
             }
         });
-    }
-
-    private static BufferedImage scaleImage(BufferedImage img) throws Exception {
-        BufferedImage bi;
-        bi = new BufferedImage(60, 100, BufferedImage.TRANSLUCENT);
-        Graphics2D g2d = (Graphics2D) bi.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-        g2d.drawImage(img, 0, 0, 60, 100, null);
-        g2d.dispose();
-        return bi;
-    }
-
-    private void goBack(){
-        dispose();
-        patientHome frame = new patientHome(p);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setSize(700,400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     private void saveInfo(){
@@ -152,11 +112,45 @@ public class newReport extends JFrame{
         }
     }
 
+    private void imageUpload(){
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File f = chooser.getSelectedFile();
+        try {
+            chosenImage = new FileInputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String filename = f.getAbsolutePath();
+        textField2.setText(filename);
+        try {
+            image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(chosenImage))));
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        try {
+            chosenImage = new FileInputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Images were written succesfully.");
+    }
+
+    private void goBack(){
+        dispose();
+        patientHome frame = new patientHome(p);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(700,400);
+        frame.setLocation(this.getLocation());
+        frame.setVisible(true);
+    }
+
     public static void main(String[] args) {
         Patient blankPatient = new Patient(" "," ",null,0," "," "," ");
-        newReport frame2 = new newReport(blankPatient);
+        editReport frame2 = new editReport(blankPatient,0);
         frame2.pack();
-        frame2.setSize(1650,1040);
+        frame2.setSize(1200,600);
         frame2.setLocationRelativeTo(null);
         frame2.setVisible(true);
         frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

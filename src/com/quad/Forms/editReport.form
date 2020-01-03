@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.quad.newReport">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.quad.Forms.editReport">
   <grid id="27dc6" binding="newReportPanel" layout-manager="GridLayoutManager" row-count="8" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -69,14 +69,6 @@
           <text value="Treatment:"/>
         </properties>
       </component>
-      <component id="454ae" class="javax.swing.JCheckBox" binding="noCheckBox" default-binding="true">
-        <constraints>
-          <grid row="2" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="No"/>
-        </properties>
-      </component>
       <component id="ef80" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -133,7 +125,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="57e3a" class="javax.swing.JButton" binding="seePreviousCaseReportsButton" default-binding="true">
+      <component id="57e3a" class="javax.swing.JButton" binding="prevComButton">
         <constraints>
           <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -181,6 +173,14 @@
         </constraints>
         <properties>
           <text value=""/>
+        </properties>
+      </component>
+      <component id="454ae" class="javax.swing.JCheckBox" binding="noCheckBox" default-binding="true">
+        <constraints>
+          <grid row="2" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="No"/>
         </properties>
       </component>
     </children>

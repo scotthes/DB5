@@ -1,7 +1,9 @@
-package com.quad;
+package com.quad.Forms;
 
+import com.quad.AutoCompletion;
 import com.quad.ClientData.GP;
 import com.quad.ClientData.MedCentre;
+import com.quad.Global;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -39,7 +41,7 @@ public class editGP extends JFrame{
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         theImage = InputStream.nullInputStream();
         try {
-            image.setIcon(new ImageIcon(scaleImage(ImageIO.read(currentGP.getPicture()))));
+            image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(currentGP.getPicture()))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,27 +56,7 @@ public class editGP extends JFrame{
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.showOpenDialog(null);
-                File f = chooser.getSelectedFile();
-                try {
-                    theImage = new FileInputStream(f);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                String filename = f.getAbsolutePath();
-                photoAddress.setText(filename);
-                try {
-                    image.setIcon(new ImageIcon(scaleImage(ImageIO.read(theImage))));
-                } catch (Exception e) {
-                    e.getMessage();
-                }
-                try {
-                    theImage = new FileInputStream(f);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("Images were written succesfully.");
+                imageUpload();
             }
         });
 
@@ -151,22 +133,35 @@ public class editGP extends JFrame{
 
     }
 
-    private static BufferedImage scaleImage(BufferedImage img) throws Exception {
-        BufferedImage bi;
-        bi = new BufferedImage(120, 120, BufferedImage.TRANSLUCENT);
-        Graphics2D g2d = (Graphics2D) bi.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-        g2d.drawImage(img, 0, 0, 120, 120, null);
-        g2d.dispose();
-        return bi;
-    }
-
     private void setupComboBox(){
         AutoCompletion.enable(medCentreBox); //Enable searchable combobox
         for (int i = 0; i < Global.MCList.size(); i++){
             medCentreBox.addItem(Global.MCList.get(i).getName());
         }
+    }
+
+    private void imageUpload(){
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File f = chooser.getSelectedFile();
+        try {
+            theImage = new FileInputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String filename = f.getAbsolutePath();
+        photoAddress.setText(filename);
+        try {
+            image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(theImage))));
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        try {
+            theImage = new FileInputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Images were written succesfully.");
     }
 
     public static void main(String[] args) {

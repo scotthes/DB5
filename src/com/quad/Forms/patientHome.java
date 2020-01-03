@@ -1,9 +1,9 @@
-package com.quad;
+package com.quad.Forms;
 
 import com.quad.ClientData.Patient;
+import com.quad.Global;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,13 +30,14 @@ public class patientHome extends JFrame {
         viewAndEditExistingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "Sorry, that feature don't exist!");
+                goListReports();
+                //JOptionPane.showMessageDialog(null, "Sorry, that feature don't exist!");
             }
         });
         newCaseReportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                goNewReport();
+                goEditReport();
             }
         });
     }
@@ -47,14 +48,20 @@ public class patientHome extends JFrame {
         Global.frameSetup(frame, this);
     }
 
-    private void goNewReport(){
+    private void goEditReport(){
         dispose();
-        newReport frame = new newReport(currentPatient);
+        editReport frame = new editReport(currentPatient,0);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setSize(1650,1040);
+        frame.setSize(1200,600);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    private void goListReports(){
+        dispose();
+        reportsList frame = new reportsList(currentPatient);
+        Global.frameSetup(frame, this);
     }
 
     public static void main(String[] args) {

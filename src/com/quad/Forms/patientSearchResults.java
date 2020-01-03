@@ -1,8 +1,9 @@
-package com.quad;
+package com.quad.Forms;
 
 import com.quad.ClientData.GP;
 import com.quad.ClientData.Patient;
 import com.quad.ClientData.Person;
+import com.quad.Global;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -107,6 +108,7 @@ public class patientSearchResults extends JFrame{
         editPatient frame = new editPatient(currentPatient);
         Global.frameSetup(frame, this);
     }
+
     private void goPatientHome(Patient currentPatient){
         dispose();
         patientHome frame = new patientHome(currentPatient);

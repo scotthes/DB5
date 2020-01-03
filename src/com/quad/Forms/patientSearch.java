@@ -1,17 +1,14 @@
-package com.quad;
+package com.quad.Forms;
 
 import com.quad.ClientData.GP;
 import com.quad.ClientData.Patient;
+import com.quad.Global;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 public class patientSearch extends JFrame {
 

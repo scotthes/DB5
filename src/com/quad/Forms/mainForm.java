@@ -1,7 +1,9 @@
-package com.quad;
+package com.quad.Forms;
+
+import com.quad.DataAccess;
+import com.quad.Global;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;

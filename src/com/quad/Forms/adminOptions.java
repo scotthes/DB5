@@ -1,12 +1,12 @@
-package com.quad;
+package com.quad.Forms;
 
 import com.quad.ClientData.GP;
 import com.quad.ClientData.Patient;
+import com.quad.Global;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 
 //Define initialOptions class as an extension of JFrame
 public class adminOptions extends JFrame {
