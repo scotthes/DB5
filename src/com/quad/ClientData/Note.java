@@ -3,13 +3,13 @@ package com.quad.ClientData;
 import com.quad.DataAccess;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Note {
-    private LocalDateTime Date;
+    private LocalDate Date;
     private String Text;
     private int CaseID;
-    public Note(LocalDateTime date,
+    public Note(LocalDate date,
                 String text,
                 int caseID){
         Date = date;
@@ -17,7 +17,7 @@ public class Note {
         CaseID = caseID;
     }
 
-    public LocalDateTime getDate(){
+    public LocalDate getDate(){
         return Date;
     }
 

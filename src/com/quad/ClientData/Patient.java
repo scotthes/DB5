@@ -2,24 +2,19 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 
 public class Patient extends Person {
     private String PhoneNum;
     private String Address;
     private LocalDate DateOfBirth;
-    private ArrayList<CaseReport> CaseReports;
     public Patient(String NameIn,
                    String EmailIn,
                    MedCentre MedCIn,
@@ -40,16 +35,8 @@ public class Patient extends Person {
         return PhoneNum;
     }
 
-    public void setPhoneNum(String phoneNum) {
-        PhoneNum = phoneNum;
-    }
-
     public String getAddress() {
         return Address;
-    }
-
-    public void setAddress(String address) {
-        Address = address;
     }
 
     public LocalDate getDOBDate(){
@@ -61,67 +48,23 @@ public class Patient extends Person {
         return dtf.format(DateOfBirth);
     }
 
-    public void addCase(String condition,
-                        int gpID){
-        CaseReport caseReport = new CaseReport(condition, gpID, this.getID());
-        CaseReports.add(caseReport);
-    }
-    public CaseReport getCase(int index){
-        return CaseReports.get(index);
-    }
-
-    public int getCaseRSize() {
-        return CaseReports.size();
+    public ArrayList<CaseReport> loadCaseReports(int pageNo){
+        return DataAccess.searchCaseReport(this.getID(), 0, pageNo);
     }
 
     public void save(InputStream pic){
-        if (this.getID() == 0){
-            try {
-                DataAccess.savePatient(this, pic);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        if (this.getID() == 0) {
+            DataAccess.savePatient(this, pic);
         }
         else {
-            try {
-                DataAccess.updatePatient(this, pic);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DataAccess.updatePatient(this, pic);
         }
     }
 
     @Override
     public ArrayList<Person> search(int pageNo){
-        ResultSet rs = null;
-        try {
-            rs = DataAccess.searchPatient(this, pageNo);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        ArrayList<Person> results = new ArrayList<>();
-        try {
-            while (rs.next()) {
-                String nameIn = rs.getString("fullname");
-                String emailIn = rs.getString("emailadd");
-                int idIn = rs.getInt(1);
-                String phoneIn = rs.getString("phonenumber");
-                String addressIn = rs.getString("patientadd");
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMMM dd");
-                String DOBin = dtf.format(rs.getDate("dob").toLocalDate());
-                int mcid = rs.getInt(8);
-                String mcName = rs.getString("mcname");
-                String mcAdd = rs.getString("mcadd");
-                MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
-                Patient pRes = new Patient(nameIn, emailIn, MedCIn, idIn, phoneIn, addressIn, DOBin);
-                results.add(pRes);
-            }
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return results;
+        return DataAccess.searchPatient(this, pageNo);
     }
-
 
     @Override
     public InputStream getPicture() {
@@ -133,26 +76,14 @@ public class Patient extends Person {
             }
         }
         else {
-            try {
-                return DataAccess.getPatientPic(this);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                return DataAccess.getPatientPic(this); //pictures retrieved from DB only when needed to speed up program on slow internets
         }
         return null;
     }
 
     @Override
     public int searchCount() {
-        int count = 0;
-        try {
-            ResultSet rs = DataAccess.searchPatientCount(this);
-            Boolean k = rs.next();
-            count = rs.getInt("count");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return count;
+        return DataAccess.searchPatientCount(this);
     }
 
 }

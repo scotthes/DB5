@@ -1,5 +1,6 @@
 package com.quad.Forms;
 
+import com.quad.ClientData.CaseReport;
 import com.quad.ClientData.Patient;
 import com.quad.Global;
 
@@ -14,13 +15,11 @@ public class patientHome extends JFrame {
     private JButton goBackButton;
     private JButton viewAndEditExistingButton;
     private JButton newCaseReportButton;
-    private Patient currentPatient;
 
-    patientHome(Patient p){
-        currentPatient = p;
+    patientHome(){
         setContentPane(patientHomePanel);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        nameLabel.setText(p.getName());
+        nameLabel.setText(Global.ActivePatient.getName());
         goBackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -43,30 +42,31 @@ public class patientHome extends JFrame {
     }
 
     private void goBack(){
-        dispose();
         patientSearch frame = new patientSearch(0);
         Global.frameSetup(frame, this);
+        dispose();
     }
 
     private void goEditReport(){
-        dispose();
-        editReport frame = new editReport(currentPatient,0);
+        CaseReport newCase = new CaseReport("", Global.ActiveGP.getID(), Global.ActivePatient.getID(), 0);
+        editReport frame = new editReport(newCase);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(1200,600);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        dispose();
     }
 
     private void goListReports(){
-        dispose();
-        reportsList frame = new reportsList(currentPatient);
+        reportsList frame = new reportsList();
         Global.frameSetup(frame, this);
+        dispose();
     }
 
     public static void main(String[] args) {
-        Patient blankPatient = new Patient(" "," ",null,0, " "," "," ");
-        patientHome frame = new patientHome(blankPatient);
+        Global.ActivePatient = new Patient(" "," ",null,0, " "," "," ");
+        patientHome frame = new patientHome();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);

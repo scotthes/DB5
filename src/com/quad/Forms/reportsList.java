@@ -19,20 +19,14 @@ public class reportsList extends JFrame {
     private JButton button3;
     private JButton button4;
     private JButton button5;
-    private Patient currentPatient;
     private ArrayList<JButton> resultsButtons = new ArrayList<>();
     private ArrayList<CaseReport> reports = new ArrayList<>();
     private ArrayList<String> reportsTitles = new ArrayList<>();
 
-    reportsList(Patient p){
-        currentPatient = p;
-        System.out.println(p.getCaseRSize());
-        for (int i = 0; i < p.getCaseRSize(); i ++){
-            reports.add(p.getCase(i));
-        }
-        for (int i = 0; i < p.getCaseRSize(); i ++){
-            String title = reports.get(i).getCondition();
-            //String date = reports.get(i).getDate();
+    reportsList(){
+        reports = Global.ActivePatient.loadCaseReports(0);
+        for (CaseReport report : reports) {
+            String title = report.getCondition() + "  | Last Modified: " + report.getLastModifiedString();
             reportsTitles.add(title); //will want to also add date
         }
 
@@ -45,10 +39,19 @@ public class reportsList extends JFrame {
                 goBack();
             }
         });
+        for(int i = 0; i < reports.size(); i++){
+            int finalI = i;
+            resultsButtons.get(i).addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    goEditReport(reports.get(finalI));
+                }
+            });
+        }
     }
 
     private void setButtons(){
-        titleLabel.setText(String.format("New Case Report For %s" , currentPatient.getName()));
+        titleLabel.setText(String.format("New Case Report For %s" , Global.ActivePatient.getName()));
         resultsButtons.add(button1);
         resultsButtons.add(button2);
         resultsButtons.add(button3);
@@ -57,20 +60,29 @@ public class reportsList extends JFrame {
         for(int i = 0; i < reports.size(); i++){
             resultsButtons.get(i).setText(reportsTitles.get(i));
         }
-        for(int i = reports.size(); i < 5 - reports.size(); i++){
+        for(int i = reports.size(); i < 5; i++){
             resultsButtons.get(i).setText("");
         }
     }
 
-    private void goBack(){
+    private void goEditReport(CaseReport caseR){
+        editReport frame = new editReport(caseR);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(1200,600);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
         dispose();
-        patientHome frame = new patientHome(currentPatient);
+    }
+    private void goBack(){
+        patientHome frame = new patientHome();
         Global.frameSetup(frame,this);
+        dispose();
     }
 
     public static void main(){
-        Patient blankPatient = new Patient(" "," ",null,0, " "," "," ");
-        reportsList frame = new reportsList(blankPatient);
+        Global.ActivePatient = new Patient(" "," ",null,0, " "," "," ");
+        reportsList frame = new reportsList();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);

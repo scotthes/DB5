@@ -3,7 +3,9 @@ package com.quad.ClientData;
 import com.quad.DataAccess;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -15,13 +17,15 @@ public class CaseReport {
     private int PatientID;
     private boolean IsChronic;
     private int CaseID;
-
+    private LocalDate lastModified;
     public CaseReport(String condition,
                       int gpID,
-                      int patientID){
+                      int patientID,
+                      int caseID){
         Condition = condition;
         GPID = gpID;
         PatientID = patientID;
+        CaseID = caseID;
         IsChronic = false; // defaults to not chronic, can be changed with button in UI
     }
 
@@ -53,9 +57,19 @@ public class CaseReport {
         IsChronic = chronic;
     }
 
-    public void addNote(Note note){
-        Notes.add(note);
+    public void setLastModified(LocalDate date){
+        lastModified = date;
     }
+
+    public String getLastModifiedString() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return dtf.format(lastModified);
+    }
+
+    public void loadNotes(){
+        Notes = DataAccess.loadNotes(this.getCaseID());
+    }
+
     public Note getNote(int index){
         return Notes.get(index);
     }
@@ -64,9 +78,10 @@ public class CaseReport {
         return Notes.size();
     }
 
-    public void addMed(Medication med){
-        Medications.add(med);
+    public void loadMedications(){
+        Medications = DataAccess.loadMedications(this.getCaseID());
     }
+
     public Medication getMed(int index){
         return Medications.get(index);
     }
@@ -76,12 +91,6 @@ public class CaseReport {
     }
 
     public void save(){
-        try {
             CaseID = DataAccess.saveCaseReport(this);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
-
-
 }

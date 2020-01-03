@@ -3,16 +3,16 @@ package com.quad.ClientData;
 import com.quad.DataAccess;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Medication {
     private String Name;
-    private LocalDateTime StartDate;
+    private LocalDate StartDate;
     private int Duration;
     private String UsageNotes;
     private int CaseID;
     public Medication(String name,
-                      LocalDateTime startDate,
+                      LocalDate startDate,
                       int duration,
                       String usageNotes,
                       int caseID){
@@ -27,7 +27,7 @@ public class Medication {
         return Name;
     }
 
-    public LocalDateTime getStartDate(){
+    public LocalDate getStartDate(){
         return StartDate;
     }
 

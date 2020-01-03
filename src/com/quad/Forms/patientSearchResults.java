@@ -29,6 +29,7 @@ public class patientSearchResults extends JFrame{
 
 
     patientSearchResults(Person pSearch, int user, int pageNo) {
+        setContentPane(searchResultsPanel);
         int resultCount = pSearch.searchCount();
         System.out.println(resultCount);
         ArrayList<Person> results = pSearch.search(pageNo);
@@ -39,7 +40,7 @@ public class patientSearchResults extends JFrame{
         }
 
         setButtons(namesResults, resultCount);
-        setContentPane(searchResultsPanel);
+        //setContentPane(searchResultsPanel);
         getRootPane().setDefaultButton(searchAgainButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -75,8 +76,8 @@ public class patientSearchResults extends JFrame{
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     if (user == 0){
-                        Patient currentPatient = (Patient) results.get(finalI);
-                        goPatientHome(currentPatient);
+                        Global.ActivePatient = (Patient) results.get(finalI);
+                        goPatientHome();
                     }
                     else if (user == 1){
                         Patient currentPatient = (Patient) results.get(finalI);
@@ -92,33 +93,33 @@ public class patientSearchResults extends JFrame{
     }
 
     private void changePage(int nextPage, Person pSearch, int user) {
-        dispose();
         patientSearchResults frame = new patientSearchResults(pSearch, user, nextPage);
         Global.frameSetup(frame, this);
+        dispose();
     }
 
     private void goBack(int user){
-        dispose();
         patientSearch frame = new patientSearch(user);
         Global.frameSetup(frame, this);
+        dispose();
     }
 
     private void goEditPatient(Patient currentPatient){
-        dispose();
         editPatient frame = new editPatient(currentPatient);
         Global.frameSetup(frame, this);
+        dispose();
     }
 
-    private void goPatientHome(Patient currentPatient){
-        dispose();
-        patientHome frame = new patientHome(currentPatient);
+    private void goPatientHome(){
+        patientHome frame = new patientHome();
         Global.frameSetup(frame, this);
+        dispose();
     }
 
     private void goEditGP(GP currentGP){
-        dispose();
         editGP frame = new editGP(currentGP);
         Global.frameSetup(frame, this);
+        dispose();
     }
 
 
@@ -139,7 +140,7 @@ public class patientSearchResults extends JFrame{
         for(int i = 0; i < results.size(); i++){
             resultsButtons.get(i).setText((String) results.get(i));
         }
-        for(int i = results.size(); i < 10 - results.size(); i++){
+        for(int i = results.size(); i < 10; i++){
             resultsButtons.get(i).setText("");
         }
     }

@@ -28,32 +28,11 @@ public class MedCentre {
 
     public void save(){
         if (this.ID == 0){
-            try {
-                DataAccess.saveMedC(this);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DataAccess.saveMedC(this);
         }
     }
 
     public MedCentre search(){
-        try {
-            ResultSet rs = DataAccess.searchMedC(this, 0);
-            if (rs.next()){
-                String name = rs.getString("mcname");
-                String address = rs.getString("mcadd");
-                int id = rs.getInt("id");
-                MedCentre mc = new MedCentre(name, address, id);
-                return mc;
-            }
-            else {
-                MedCentre mc = new MedCentre("", "", 0);
-                return mc;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        MedCentre mc = new MedCentre("", "", 0);
-        return mc;
+        return DataAccess.searchMedC(this);
     }
 }

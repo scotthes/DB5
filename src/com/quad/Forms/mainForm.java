@@ -26,17 +26,11 @@ public class mainForm extends JFrame {
                 if (name.getText().equals("Admin") && String.valueOf(pw.getPassword()).equals("pass")) {
                     grantAdminAccess();
                 }
-                else {
-                    try {
-                        if (DataAccess.GPLogin(name.getText(), String.valueOf(pw.getPassword()))) {
-                            grantGPAccess();
-                        }
-                        else{
-                            JOptionPane.showMessageDialog(null, "Sorry, those details are not recognised!");
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                else if (DataAccess.GPLogin(name.getText(), String.valueOf(pw.getPassword()))) {
+                    grantGPAccess();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Sorry, those details are not recognised!");
                 }
             }
         });
@@ -55,11 +49,7 @@ public class mainForm extends JFrame {
     }
 
     public static void main(String[] args){
-        try {
-            DataAccess.loadMedCs();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        DataAccess.loadMedCs();
         mainForm frame = new mainForm();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
