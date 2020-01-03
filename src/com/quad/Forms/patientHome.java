@@ -1,5 +1,6 @@
 package com.quad.Forms;
 
+import com.quad.AutoCompletion;
 import com.quad.ClientData.CaseReport;
 import com.quad.ClientData.Patient;
 import com.quad.Global;
@@ -13,30 +14,34 @@ public class patientHome extends JFrame {
     private JPanel patientHomePanel;
     private JLabel nameLabel;
     private JButton goBackButton;
-    private JButton viewAndEditExistingButton;
     private JButton newCaseReportButton;
+    private JComboBox<String> existingReportsBox;
+    private JButton goButton;
 
     patientHome(){
         setContentPane(patientHomePanel);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        nameLabel.setText(Global.ActivePatient.getName());
+        nameLabel.setText(Global.ActivePatient.getName() + "'s Case Reports");
+        comboBoxSetup();
         goBackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 goBack();
             }
         });
-        viewAndEditExistingButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                goListReports();
-                //JOptionPane.showMessageDialog(null, "Sorry, that feature don't exist!");
-            }
-        });
+
         newCaseReportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 goEditReport();
+            }
+        });
+
+        goButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String reportName = (String)existingReportsBox.getSelectedItem();
+                JOptionPane.showMessageDialog(null,reportName);
             }
         });
     }
@@ -58,11 +63,19 @@ public class patientHome extends JFrame {
         dispose();
     }
 
-    private void goListReports(){
+    private void comboBoxSetup(){
+        AutoCompletion.enable(existingReportsBox); //Enable searchable combobox
+        //System.out.println(Global.ActivePatient.loadCaseReports(0).get(1).getCondition());
+        for (int i = 0; i < Global.ActivePatient.loadCaseReports(0).size(); i++){
+            existingReportsBox.addItem(Global.ActivePatient.loadCaseReports(0).get(i).getLastModifiedString()); //GET CONDITION NOT WORKING
+        }
+    }
+
+    /*private void goListReports(){   NO LONGER NEEDED. CAN DELETE
         reportsList frame = new reportsList();
         Global.frameSetup(frame, this);
         dispose();
-    }
+    }*/
 
     public static void main(String[] args) {
         Global.ActivePatient = new Patient(" "," ",null,0, " "," "," ");

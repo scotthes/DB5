@@ -25,174 +25,14 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
-        <schema name="pg_catalog" object-types="table, view, function" />
-        <schema name="public" object-types="table, view, function, column" />
+        <schema name="pg_catalog" object-types="view, table, function" />
+        <schema name="public" object-types="column, view, table, function" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
-      <console name="nhsDatabase" type="STANDARD" schema="public" session="Main"><![CDATA[CREATE TABLE public.gp(
-id SERIAL PRIMARY KEY,
-fullname varchar(128) NOT NULL,
-pagernum varchar(32) NOT NULL,
-emailadd varchar(128) NOT NULL,
-medicalcentreid int NOT NULL,
-username varchar(32) NOT NULL,
-pswrd varchar(32) NOT NULL,
-picture bytea
-)
-
-CREATE TABLE public.patients(
-id SERIAL PRIMARY KEY,
-fullname varchar(128) NOT NULL,
-phonenumber varchar(64) NOT NULL, 
-emailadd varchar(128) NOT NULL,
-medicalcentre int NOT NULL,
-patientadd varchar(256) NOT NULL, 
-dob date NOT NULL,
-picture bytea)
-
-CREATE TABLE public.medicalcentre(
-id SERIAL PRIMARY KEY,
-mcname varchar(256) NOT NULL,
-mcadd varchar(512) NOT NULL
-)
-
-CREATE TABLE public.casereports(
-id SERIAL PRIMARY KEY,
-patientid int NOT NULL,
-gpid int NOT NULL,
-condition varchar(128),
-chronic boolean
-)
-
-
-drop table public.medication;
-CREATE TABLE public.medication(
-id SERIAL PRIMARY KEY,
-medname varchar(128) NOT NULL,
-startdate date,
-duration int NOT NULL,
-usagenotes varchar(512) NOT NULL,
-casereportid int NOT NULL
-)
-
-CREATE TABLE public.notes(
-id SERIAL PRIMARY KEY,
-notedate date,
-note varchar(2048),
-casereportid int NOT NULL
-)
-
-Select * from public.medicalcentre
-Select * from public.patients
-delete from public.patients where id=2;
-select * from public.gp
-
-select * from public.casereports
-select * from public.notes
-select * from public.medication
-
-SELECT gp.id, fullname, pagernum, emailadd, medicalcentreid, username, pswrd, medicalcentre.id, mcname, mcadd from gp
-                INNER JOIN medicalcentre
-                ON gp.medicalcentreid = medicalcentre.id
-
-SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, medicalcentre.id, mcname, mcadd from patients
-                INNER JOIN medicalcentre
-                ON patients.medicalcentre = medicalcentre.id
-                
-                SELECT tstamp, patient_history.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, medicalcentre.id, mcname, mcadd from patient_history
-                INNER JOIN medicalcentre
-                ON patient_history.medicalcentre = medicalcentre.id
-
-SELECT * from
-       (SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd, ROW_NUMBER() OVER (ORDER by patients.id) as RowNumber from patients
-       INNER JOIN medicalcentre
-       ON patients.medicalcentre = medicalcentre.id) as foo
-   where RowNumber>10 order by id limit 10;
-
-drop table patient_history
-CREATE TABLE patient_history (
-	tstamp timestamp,
-    id int,
-    fullname text,
-    phonenumber text, 
-    emailadd text,
-    medicalcentre int,
-    patientadd text, 
-    dob date,
-    picture bytea
-);
-
-
-CREATE OR REPLACE FUNCTION process_patient_history() RETURNS TRIGGER AS $patient_history$
-    BEGIN
-       	IF (TG_OP = 'UPDATE') THEN
-	INSERT INTO patient_history SELECT now(), OLD.*;
-	RETURN OLD;
-        END IF;
-        RETURN NULL; -- result is ignored since this is an AFTER trigger
-    END;
-$patient_history$ LANGUAGE plpgsql;
-
-CREATE TRIGGER patient_history
-AFTER UPDATE ON patients
-    FOR EACH ROW EXECUTE PROCEDURE process_patient_history();
-
-Update patients SET
-                fullname = 'NoName Mgee 3',
-                patientadd = 'Somewhere even more warm',
-                emailadd = 'yeah'
-                WHERE id = 5;
-
-CREATE TABLE gp_history(
-	tstamp		timestamp,
-id int,
-fullname varchar(128),
-pagernum varchar(32),
-emailadd varchar (128),
-medicalcentreid int,
-username varchar(32),
-pswrd varchar(32),
-picture bytea
-);
-
-
-CREATE OR REPLACE FUNCTION process_gp_history() RETURNS TRIGGER AS $gp_history$
-    BEGIN
-       	IF (TG_OP = 'UPDATE') THEN
-	INSERT INTO gp_history SELECT now(), OLD.*;
-	RETURN OLD;
-        END IF;
-        RETURN NULL; -- result is ignored since this is an AFTER trigger
-    END;
-$gp_history$ LANGUAGE plpgsql;
-
-DROP TRIGGER gp_history ON patients
-
-CREATE TRIGGER gp_history
-AFTER UPDATE ON gp
-    FOR EACH ROW EXECUTE PROCEDURE process_gp_history();
-
-Update gp SET
-                fullname = 'Henners with a z'
-                WHERE id = 1;
-
-SELECT tstamp, gp_history.id, fullname, pagernum, emailadd, medicalcentreid, username, pswrd, medicalcentre.id, mcname, mcadd from gp_history
-                INNER JOIN medicalcentre
-                ON gp_history.medicalcentreid = medicalcentre.id
-
-
-SELECT * from
-    (SELECT DISTINCT  ON (casereports.id) casereports.id, patientid, gpid, condition, chronic, notedate, ROW_NUMBER() OVER (ORDER by notedate desc) as RowNumber from casereports
-    inner join notes on casereports.id=notes.casereportid) moo
-WHERE RowNumber > 0 ORDER BY notedate desc LIMIT 10 ;
-
-SELECT * from notes
-
-insert into notes (notedate, note, casereportid)
-values (now(), 'Take more meds', 8)]]></console>
+      <console name="nhsDatabase" type="STANDARD" schema="public" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -438,12 +278,22 @@ values (now(), 'Take more meds', 8)]]></console>
           <content-type name="DTD" enabled="true" />
           <content-type name="HTML" enabled="true" />
           <content-type name="XHTML" enabled="true" />
+          <content-type name="CSS" enabled="true" />
           <content-type name="Java" enabled="true" />
           <content-type name="SQL" enabled="true" />
           <content-type name="PL/SQL" enabled="true" />
+          <content-type name="JavaScript" enabled="true" />
+          <content-type name="JSP" enabled="true" />
+          <content-type name="JSPx" enabled="true" />
           <content-type name="Groovy" enabled="true" />
+          <content-type name="FTL" enabled="true" />
+          <content-type name="TML" enabled="true" />
+          <content-type name="GSP" enabled="true" />
+          <content-type name="ASP" enabled="true" />
+          <content-type name="VTL" enabled="true" />
           <content-type name="AIDL" enabled="true" />
           <content-type name="YAML" enabled="true" />
+          <content-type name="Flex" enabled="true" />
           <content-type name="Manifest" enabled="true" />
         </content-types>
       </qualified-text-editor>
