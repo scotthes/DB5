@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-public class patientSearch extends JFrame {
+public class searchPage extends JFrame {
 
     private JPanel optionsGPPanel;
     private JButton OKButton;
@@ -23,9 +23,12 @@ public class patientSearch extends JFrame {
     private JLabel titleLabel;
     private JButton goBackButton;
 
-    patientSearch(int type){
+    searchPage(int type){
         if (type == 2){
             titleLabel.setText("GP Search");
+        }
+        else if (type == 0){
+            goBackButton.setVisible(false); //A searching GP does not need a go back button, only a logout
         }
         setContentPane(optionsGPPanel);
         getRootPane().setDefaultButton(OKButton);
@@ -82,7 +85,7 @@ public class patientSearch extends JFrame {
                 JOptionPane.showMessageDialog(null, "Sorry, no GP with those details can be found!");
             }
             else {
-                patientSearchResults frame = new patientSearchResults(gSearch, type, 0);
+                searchResults frame = new searchResults(gSearch, type, 0);
                 Global.frameSetup(frame, this);
                 this.dispose();
             }
@@ -94,7 +97,7 @@ public class patientSearch extends JFrame {
                 JOptionPane.showMessageDialog(null, "Sorry, no patient with those details can be found!");
             }
             else {
-                patientSearchResults frame = new patientSearchResults(pSearch, type, 0);
+                searchResults frame = new searchResults(pSearch, type, 0);
                 Global.frameSetup(frame, this);
                 this.dispose();
             }
@@ -116,10 +119,11 @@ public class patientSearch extends JFrame {
 
     public static void main(String[] args) {
         int blankInt = 3;
-        patientSearch frame = new patientSearch(blankInt);
+        searchPage frame = new searchPage(blankInt);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 

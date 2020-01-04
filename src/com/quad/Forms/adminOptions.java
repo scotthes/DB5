@@ -82,7 +82,7 @@ public class adminOptions extends JFrame {
 
     private void exPatient(){
         dispose();
-        patientSearch frame = new patientSearch(1);
+        searchPage frame = new searchPage(1);
         Global.frameSetup(frame, this);
     }
 
@@ -95,7 +95,7 @@ public class adminOptions extends JFrame {
 
     private void exGP(){
         dispose();
-        patientSearch frame = new patientSearch(2);
+        searchPage frame = new searchPage(2);
         Global.frameSetup(frame, this);
     }
 
@@ -104,6 +104,7 @@ public class adminOptions extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

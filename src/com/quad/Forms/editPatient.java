@@ -31,10 +31,11 @@ public class editPatient extends JFrame {
     private JLabel image;
     private JButton logoutButton;
     private JButton cancelAndReturnHomeButton;
+    private JButton viewPreviousEditsButton;
     private InputStream chosenImage;
 
     editPatient(Patient currentPatient) {
-
+        viewPreviousEditsButton.setVisible(false);
         comboBoxSetup();
         fillExistingDetails(currentPatient);
         setContentPane(newPatientPanel);
@@ -72,6 +73,12 @@ public class editPatient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 Return();
+            }
+        });
+        viewPreviousEditsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //Henry DO LKE CASE REPORTS
             }
         });
     }
@@ -119,6 +126,7 @@ public class editPatient extends JFrame {
     private void fillExistingDetails(Patient currentPatient){
         if(!currentPatient.getName().equals(" ")){
             nameField.setText(currentPatient.getName());
+            viewPreviousEditsButton.setVisible(true);
         }
         if(!currentPatient.getEmail().equals(" ")){
             emailField.setText(currentPatient.getEmail());
@@ -173,6 +181,7 @@ public class editPatient extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

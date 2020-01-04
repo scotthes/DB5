@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class patientSearchResults extends JFrame{
+public class searchResults extends JFrame{
     private JPanel searchResultsPanel;
     private JButton searchAgainButton;
     private JLabel titleLabel;
@@ -28,7 +28,7 @@ public class patientSearchResults extends JFrame{
     private ArrayList<JButton> resultsButtons = new ArrayList<>();
 
 
-    patientSearchResults(Person pSearch, int user, int pageNo) {
+    searchResults(Person pSearch, int user, int pageNo) {
         setContentPane(searchResultsPanel);
         int resultCount = pSearch.searchCount();
         System.out.println(resultCount);
@@ -93,13 +93,13 @@ public class patientSearchResults extends JFrame{
     }
 
     private void changePage(int nextPage, Person pSearch, int user) {
-        patientSearchResults frame = new patientSearchResults(pSearch, user, nextPage);
+        searchResults frame = new searchResults(pSearch, user, nextPage);
         Global.frameSetup(frame, this);
         dispose();
     }
 
     private void goBack(int user){
-        patientSearch frame = new patientSearch(user);
+        searchPage frame = new searchPage(user);
         Global.frameSetup(frame, this);
         dispose();
     }
@@ -147,10 +147,11 @@ public class patientSearchResults extends JFrame{
     public static void main(String[] args) {
         Patient blankPatient = new Patient(" "," ",null,0," "," ","1915 January 01");
         int blankUser = 3;
-        patientSearchResults frame = new patientSearchResults(blankPatient, blankUser, 0);
+        searchResults frame = new searchResults(blankPatient, blankUser, 0);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

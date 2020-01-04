@@ -1,5 +1,6 @@
 package com.quad.Forms;
 
+import com.quad.AutoCompletion;
 import com.quad.ClientData.*;
 import com.quad.Global;
 
@@ -13,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class editReport extends JFrame{
     private JTextArea caseNotesInput;
@@ -23,38 +23,51 @@ public class editReport extends JFrame{
     private JPanel newReportPanel;
     private JTextField medInput;
     private JLabel titleLabel;
-    private JTextField durationInput;
     private JTextField conditionText;
-    private JTextField textField1;
     private JButton prevComButton;
-    private JTextField textField2;
+    private JTextField imageURL;
     private JButton browseButton;
     private JLabel image;
+    private JButton cancelButton;
+    private JComboBox dayBox;
+    private JComboBox monthBox;
+    private JComboBox yearBox;
+    private JComboBox<Integer> durationBox;
     private boolean isChronic;
     private InputStream chosenImage;
     private int commentsIterator;
+    private CaseReport caseR;
 
-    editReport(CaseReport caseR) {
+    editReport(CaseReport cR) {
+        comboBoxSetup();
+        caseR = cR;
         caseNotesInput.setLineWrap(true); //Allow textfield input to wrap
+
         if (caseR.getCaseID() == 0){
             prevComButton.setVisible(false); //Do not display the previous comments button if it is a new report
+            titleLabel.setText(String.format("New Case Report For %s" , Global.ActivePatient.getName()));
+        }
+        else if(Global.ActivePatient.getID() == 0){
+            setupForAdmin();
         }
         else{
             caseR.loadNotes();
             caseR.loadMedications();
             fillExisting(caseR);
+            titleLabel.setText(String.format("Case Report For %s" , Global.ActivePatient.getName()));
         }
-        titleLabel.setText(String.format("New Case Report For %s" , Global.ActivePatient.getName()));
+
         setContentPane(newReportPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(isConditionChronic()){
                     if (Global.ActivePatient.getID()!=0){
                         saveInfo(caseR);
-                    } //does not save edits if no active patient - this is when an admin is viewing case reports
+                    } //Does not save edits if no active patient - this is when an admin is viewing case reports
                     goBack();
                 }
             }
@@ -76,10 +89,18 @@ public class editReport extends JFrame{
         });
 
         chosenImage = Global.ActivePatient.getPicture();
+
         browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                         imageUpload();
+            }
+        });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                goBack();
             }
         });
     }
@@ -96,13 +117,30 @@ public class editReport extends JFrame{
         Note note = new Note(now, noteText, CR.getCaseID());
         note.save();
 
-        LocalDate now2 = LocalDate.now();
+        LocalDate startDate = LocalDate.now(); //CHANGE TO GET START DATE FROM COMBO BOXES
         String medName = medInput.getText();
-        int duration = Integer.parseInt(durationInput.getText());
-        Medication med = new Medication(medName, now2, duration, "", CR.getCaseID());
-        if(!med.equals(caseR.getMed(0))){
+        int duration = (int) durationBox.getSelectedItem();
+        Medication med = new Medication(medName,startDate, duration, "", CR.getCaseID());
+        if(caseR.getMedSize()!=0){
+            if(!med.equals(caseR.getMed(0))){
+                med.save();
+            }
+        }
+        else{
             med.save();
         }
+    }
+
+    private void setupForAdmin(){
+        caseR.loadNotes();
+        caseR.loadMedications();
+        fillExisting(caseR);
+        titleLabel.setText("Case Report");
+        conditionText.setEditable(false);
+        durationBox.setEditable(false);
+        medInput.setEditable(false);
+        caseNotesInput.setEditable(false);
+        browseButton.setVisible(false);
     }
 
     private boolean isConditionChronic(){
@@ -130,7 +168,7 @@ public class editReport extends JFrame{
             e.printStackTrace();
         }
         String filename = f.getAbsolutePath();
-        textField2.setText(filename);
+        imageURL.setText(filename);
         try {
             image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(chosenImage))));
         } catch (Exception e) {
@@ -141,19 +179,29 @@ public class editReport extends JFrame{
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("Images were written succesfully.");
     }
 
     private void fillExisting(CaseReport caseR){
         conditionText.setText(caseR.getCondition());
         yesCheckBox.setSelected(caseR.getChronic());
         noCheckBox.setSelected(!caseR.getChronic());
-        medInput.setText(caseR.getMed(0).getName());
-        durationInput.setText(String.valueOf(caseR.getMed(0).getDuration()));
+
+        if (caseR.getMedSize()!=0){
+            medInput.setText(caseR.getMed(0).getName());
+            durationBox.setSelectedItem(String.valueOf(caseR.getMed(0).getDuration()));
+        }
+
         fillComments(caseR.getNote(0));
     }
     private void fillComments(Note note){
         caseNotesInput.setText(note.getText());
+    }
+
+    private void comboBoxSetup(){
+        AutoCompletion.enable(durationBox); //Enable searchable combobox
+        for(int i = 0; i < 1000; i ++){
+            durationBox.addItem(i);
+        }
     }
 
     private void goBack(){
@@ -161,6 +209,7 @@ public class editReport extends JFrame{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocation(this.getLocation());
         frame.setVisible(true);
         dispose();
@@ -172,6 +221,7 @@ public class editReport extends JFrame{
         editReport frame2 = new editReport(nullCaseR);
         frame2.pack();
         frame2.setSize(1200,600);
+        frame2.setResizable(false);
         frame2.setLocationRelativeTo(null);
         frame2.setVisible(true);
         frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

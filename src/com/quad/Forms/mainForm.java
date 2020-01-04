@@ -8,7 +8,6 @@ import com.quad.Global;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
 public class mainForm extends JFrame {
     private JPanel panel1;
@@ -48,7 +47,7 @@ public class mainForm extends JFrame {
 
     private void grantGPAccess(){
         dispose();
-        patientSearch frame = new patientSearch(0);
+        searchPage frame = new searchPage(0);
         Global.frameSetup(frame, this);
     }
 
@@ -58,6 +57,7 @@ public class mainForm extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

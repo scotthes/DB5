@@ -2,6 +2,7 @@ package com.quad.Forms;
 
 import com.quad.AutoCompletion;
 import com.quad.ClientData.CaseReport;
+import com.quad.ClientData.Medication;
 import com.quad.ClientData.Patient;
 import com.quad.Global;
 
@@ -18,23 +19,30 @@ public class patientHome extends JFrame {
     private JButton newCaseReportButton;
     private JComboBox<String> existingReportsBox;
     private JButton goButton;
+    private JLabel medsLabel;
+    private JComboBox<String> medsBox;
     private ArrayList<CaseReport> reports;
+    private ArrayList<String> meds;
 
     patientHome(){
         setContentPane(patientHomePanel);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
         if (Global.ActivePatient.getID()!=0){
             nameLabel.setText(Global.ActivePatient.getName() + "'s Case Reports");
             reports = Global.ActivePatient.loadCaseReports();
+            medListSetup();
         }
         else {
-            nameLabel.setText(Global.ActiveGP.getName()+ "'s Case Reports");
+            nameLabel.setText("Case Reports For " + Global.ActiveGP.getName());
             reports = Global.ActiveGP.loadCaseReports();
             newCaseReportButton.setVisible(false);
+            medsLabel.setVisible(false);
+            medsBox.setVisible(false);
         }
 
-
         comboBoxSetup();
+
         goBackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -53,7 +61,6 @@ public class patientHome extends JFrame {
         goButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
                 goEditReport(reports.get(existingReportsBox.getSelectedIndex()));
             }
         });
@@ -64,7 +71,7 @@ public class patientHome extends JFrame {
         if (Global.ActivePatient.getID()==0){
             type = 2;
         }
-        patientSearch frame = new patientSearch(type);
+        searchPage frame = new searchPage(type);
         Global.frameSetup(frame, this);
         dispose();
     }
@@ -74,6 +81,7 @@ public class patientHome extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(1200,600);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         dispose();
@@ -92,11 +100,16 @@ public class patientHome extends JFrame {
         }
     }
 
-    /*private void goListReports(){   NO LONGER NEEDED. CAN DELETE
-        reportsList frame = new reportsList();
-        Global.frameSetup(frame, this);
-        dispose();
-    }*/
+    private void medListSetup(){
+        for (CaseReport report : reports) {
+            report.loadMedications();
+            if (report.getMedSize()!=0) {
+                Medication med1 = report.getMed(0);
+                String name = med1.getName();
+                medsBox.addItem(name);
+            }
+        }
+    }
 
     public static void main(String[] args) {
         Global.ActivePatient = new Patient(" "," ",null,0, " "," "," ");
@@ -104,6 +117,7 @@ public class patientHome extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

@@ -18,6 +18,7 @@ public class Global {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(oldFrame.getWidth(),oldFrame.getHeight());
+        frame.setResizable(false);
         frame.setLocation(oldFrame.getLocation());
         frame.setVisible(true);
     }

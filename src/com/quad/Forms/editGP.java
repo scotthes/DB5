@@ -30,9 +30,11 @@ public class editGP extends JFrame{
     private JButton cancelAndReturnHomeButton;
     private JLabel titleLabel;
     private JButton reportsButton;
+    private JButton viewPreiviousEditsButton;
     private InputStream theImage;
 
     editGP(GP currentGP){
+        viewPreiviousEditsButton.setVisible(false);
         reportsButton.setVisible(false);
         setupComboBox();
         fillExistingDetails(currentGP);
@@ -79,6 +81,12 @@ public class editGP extends JFrame{
                 goReports();
             }
         });
+        viewPreiviousEditsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //HENRY DO LKE YOU DID FOR CASE REPORTS
+            }
+        });
     }
 
     private void goReports(){
@@ -105,6 +113,7 @@ public class editGP extends JFrame{
             textField1.setText(currentGP.getName());
             textField6.setText("DO NOT CHANGE");
             reportsButton.setVisible(true);
+            viewPreiviousEditsButton.setVisible(true);
         }
         if(!currentGP.getEmail().equals(" ")){
             textField2.setText(currentGP.getEmail());
@@ -177,6 +186,7 @@ public class editGP extends JFrame{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(700,400);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

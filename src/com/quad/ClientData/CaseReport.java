@@ -27,6 +27,8 @@ public class CaseReport {
         PatientID = patientID;
         CaseID = caseID;
         IsChronic = false; // defaults to not chronic, can be changed with button in UI
+        Medications = new ArrayList<>();
+        Notes = new ArrayList<>();
     }
 
     public int getCaseID() {
