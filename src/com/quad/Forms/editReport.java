@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class editReport extends JFrame{
     private JTextArea caseNotesInput;
@@ -127,7 +128,7 @@ public class editReport extends JFrame{
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
         LocalDate startDate = LocalDate.parse(start, dtf);
         String medName = medInput.getText();
-        int duration = Integer.parseInt((String) durationBox.getSelectedItem());
+        int duration = Integer.parseInt((String) Objects.requireNonNull(durationBox.getSelectedItem()));
         Medication med = new Medication(medName,startDate, duration, "", CR.getCaseID());
         if(caseR.getMedSize()!=0){
             if(!med.equals(caseR.getMed(0))){

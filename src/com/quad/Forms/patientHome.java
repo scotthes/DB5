@@ -105,7 +105,7 @@ public class patientHome extends JFrame {
     private void medListSetup(){
         ArrayList<Medication> ActiveMeds = DataAccess.getActiveMed(Global.ActivePatient.getID());
         for (Medication med : ActiveMeds){
-            medsBox.addItem(med.getName());
+            medsBox.addItem(med.getName() + "       " + med.getStartDate() + "       " + med.getDuration() + " Days");
         }
     }
 

@@ -117,9 +117,9 @@ public class DataAccess {
                     "(SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd, ROW_NUMBER() OVER (ORDER by patients.id) as RowNumber from patients " +
                     "INNER JOIN medicalcentre " +
                     "ON patients.medicalcentre = medicalcentre.id " +
-                    "WHERE (fullname IILIKE ? OR ? IS NULL)" +
-                    "AND (patientadd IILIKE ? OR ? IS NULL)" +
-                    "AND (emailadd IILIKE ? OR ? IS NULL)" +
+                    "WHERE (fullname ILIKE ? OR ? IS NULL)" +
+                    "AND (patientadd ILIKE ? OR ? IS NULL)" +
+                    "AND (emailadd ILIKE ? OR ? IS NULL)" +
                     "AND (phonenumber ILIKE ? OR ? IS NULL)" +
                     "AND (?::date IS NULL or dob = ?)) foo " +                 //this is not an error, regardless of what intellij says!
                     "WHERE RowNumber > ? ORDER BY id LIMIT 10 ;";
@@ -176,9 +176,9 @@ public class DataAccess {
         try {
             conn = DataAccess.connect();
             String query = "SELECT COUNT(id) from patients " +
-                    "WHERE (fullname IILIKE ? OR ? IS NULL)" +
-                    "AND (patientadd IILIKE ? OR ? IS NULL)" +
-                    "AND (emailadd IILIKE ? OR ? IS NULL)" +
+                    "WHERE (fullname ILIKE ? OR ? IS NULL)" +
+                    "AND (patientadd ILIKE ? OR ? IS NULL)" +
+                    "AND (emailadd ILIKE ? OR ? IS NULL)" +
                     "AND (phonenumber ILIKE ? OR ? IS NULL)" +
                     "AND (?::date IS NULL or dob = ?)";
             java.sql.Date dateOB;

@@ -31,6 +31,7 @@ public class editGP extends JFrame{
     private JLabel titleLabel;
     private JButton reportsButton;
     private JButton viewPreiviousEditsButton;
+    private JButton enlargeImageButton;
     private InputStream theImage;
 
     editGP(GP currentGP){
@@ -85,6 +86,24 @@ public class editGP extends JFrame{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 //HENRY DO LKE YOU DID FOR CASE REPORTS
+            }
+        });
+        enlargeImageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFrame viewImage = new JFrame();
+                ImageIcon icon = null;
+                try {
+                    icon = new ImageIcon(ImageIO.read(currentGP.getPicture()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                JLabel label = new JLabel(icon);
+                viewImage.setLocation(getLocation());
+                viewImage.add(label);
+                viewImage.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                viewImage.pack();
+                viewImage.setVisible(true);
             }
         });
     }
