@@ -117,10 +117,10 @@ public class DataAccess {
                     "(SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd, ROW_NUMBER() OVER (ORDER by patients.id) as RowNumber from patients " +
                     "INNER JOIN medicalcentre " +
                     "ON patients.medicalcentre = medicalcentre.id " +
-                    "WHERE (fullname LIKE ? OR ? IS NULL)" +
-                    "AND (patientadd LIKE ? OR ? IS NULL)" +
-                    "AND (emailadd LIKE ? OR ? IS NULL)" +
-                    "AND (phonenumber LIKE ? OR ? IS NULL)" +
+                    "WHERE (fullname IILIKE ? OR ? IS NULL)" +
+                    "AND (patientadd IILIKE ? OR ? IS NULL)" +
+                    "AND (emailadd IILIKE ? OR ? IS NULL)" +
+                    "AND (phonenumber ILIKE ? OR ? IS NULL)" +
                     "AND (?::date IS NULL or dob = ?)) foo " +                 //this is not an error, regardless of what intellij says!
                     "WHERE RowNumber > ? ORDER BY id LIMIT 10 ;";
             java.sql.Date dateOB;
@@ -176,10 +176,10 @@ public class DataAccess {
         try {
             conn = DataAccess.connect();
             String query = "SELECT COUNT(id) from patients " +
-                    "WHERE (fullname LIKE ? OR ? IS NULL)" +
-                    "AND (patientadd LIKE ? OR ? IS NULL)" +
-                    "AND (emailadd LIKE ? OR ? IS NULL)" +
-                    "AND (phonenumber LIKE ? OR ? IS NULL)" +
+                    "WHERE (fullname IILIKE ? OR ? IS NULL)" +
+                    "AND (patientadd IILIKE ? OR ? IS NULL)" +
+                    "AND (emailadd IILIKE ? OR ? IS NULL)" +
+                    "AND (phonenumber ILIKE ? OR ? IS NULL)" +
                     "AND (?::date IS NULL or dob = ?)";
             java.sql.Date dateOB;
             if (input.getDOBString().equals("1915-01-01")) {
@@ -344,10 +344,10 @@ public class DataAccess {
                     "(SELECT gp.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd, ROW_NUMBER() OVER (ORDER by gp.id) as RowNumber from gp " +
                     "INNER JOIN medicalcentre " +
                     "ON gp.medicalcentreid = medicalcentre.id " +
-                    "WHERE (fullname LIKE ? OR ? IS NULL)" +
-                    "AND (pagernum LIKE ? OR ? IS NULL)" +
-                    "AND (emailadd LIKE ? OR ? IS NULL)" +
-                    "AND (username LIKE ? OR ? IS NULL)) foo " +
+                    "WHERE (fullname ILIKE ? OR ? IS NULL)" +
+                    "AND (pagernum ILIKE ? OR ? IS NULL)" +
+                    "AND (emailadd ILIKE ? OR ? IS NULL)" +
+                    "AND (username ILIKE ? OR ? IS NULL)) foo " +
                     "WHERE RowNumber > ? ORDER BY id LIMIT 5 ;";
             ps = conn.prepareStatement(query);
             ps.setString(1, "%" + input.getName() + "%");
@@ -391,10 +391,10 @@ public class DataAccess {
         try {
             conn = DataAccess.connect();
             String query = "SELECT COUNT(id) from gp " +
-                    "WHERE (fullname LIKE ? OR ? IS NULL)" +
-                    "AND (pagernum LIKE ? OR ? IS NULL)" +
-                    "AND (emailadd LIKE ? OR ? IS NULL)" +
-                    "AND (username LIKE ? OR ? IS NULL)";
+                    "WHERE (fullname ILIKE ? OR ? IS NULL)" +
+                    "AND (pagernum ILIKE ? OR ? IS NULL)" +
+                    "AND (emailadd ILIKE ? OR ? IS NULL)" +
+                    "AND (username ILIKE ? OR ? IS NULL)";
 
             ps = conn.prepareStatement(query);
             ps.setString(1, "%" + input.getName() + "%");
@@ -511,7 +511,7 @@ public class DataAccess {
         try {
             conn = DataAccess.connect();
             String query = "SELECT *, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from medicalcentre " +
-                    "WHERE (mcname LIKE ?) ORDER BY id LIMIT 3;";
+                    "WHERE (mcname ILIKE ?) ORDER BY id LIMIT 3;";
             ps = conn.prepareStatement(query);
             ps.setString(1, input.getName());
             rs = ps.executeQuery();

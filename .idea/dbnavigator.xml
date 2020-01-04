@@ -23,16 +23,11 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes>
-      <connection connection-id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
-        <schema name="pg_catalog" object-types="function, table, view" />
-        <schema name="public" object-types="column, function, table, view" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
-      <console name="nhsDatabase" type="STANDARD" schema="public" session="Main">CREATE TABLE public.gp(
+      <console name="nhsDatabase" type="STANDARD" schema="public" session="Main"><![CDATA[CREATE TABLE public.gp(
 id SERIAL PRIMARY KEY,
 fullname varchar(128) NOT NULL,
 pagernum varchar(32) NOT NULL,
@@ -111,7 +106,7 @@ SELECT * from
        (SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd, ROW_NUMBER() OVER (ORDER by patients.id) as RowNumber from patients
        INNER JOIN medicalcentre
        ON patients.medicalcentre = medicalcentre.id) as foo
-   where RowNumber&gt;10 order by id limit 10;
+   where RowNumber>10 order by id limit 10;
 
 drop table patient_history
 CREATE TABLE patient_history (
@@ -188,12 +183,12 @@ SELECT tstamp, gp_history.id, fullname, pagernum, emailadd, medicalcentreid, use
 SELECT * from
     (SELECT DISTINCT  ON (casereports.id) casereports.id, patientid, gpid, condition, chronic, notedate, ROW_NUMBER() OVER (ORDER by notedate desc) as RowNumber from casereports
     inner join notes on casereports.id=notes.casereportid) moo
-WHERE RowNumber &gt; 0 ORDER BY notedate desc LIMIT 10 ;
+WHERE RowNumber > 0 ORDER BY notedate desc LIMIT 10 ;
 
 SELECT * from notes
 
 insert into notes (notedate, note, casereportid)
-values (now(), 'Take more meds', 8)</console>
+values (now(), 'Take more meds', 8)]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">

@@ -127,7 +127,7 @@ public class editReport extends JFrame{
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
         LocalDate startDate = LocalDate.parse(start, dtf);
         String medName = medInput.getText();
-        int duration = (int) durationBox.getSelectedItem();
+        int duration = Integer.parseInt((String) durationBox.getSelectedItem());
         Medication med = new Medication(medName,startDate, duration, "", CR.getCaseID());
         if(caseR.getMedSize()!=0){
             if(!med.equals(caseR.getMed(0))){
