@@ -149,7 +149,7 @@ public class DataAccess {
                 int idIn = rs.getInt("id");
                 String phoneIn = rs.getString("phonenumber");
                 String addressIn = rs.getString("patientadd");
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMMM dd");
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
                 String DOBin = dtf.format(rs.getDate("dob").toLocalDate());
                 int mcid = rs.getInt("medicalcentre");
                 String mcName = rs.getString("mcname");
@@ -748,25 +748,41 @@ public class DataAccess {
             try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
-    public static ResultSet searchMedAll(int caseID, int pageNo) throws SQLException {
-        Connection conn = DataAccess.connect();
-        String query =  "SELECT medname, startdate, duration, usuagenotes from medication" +
-                "(SELECT *, ROW_NUMBER() OVER (ORDER by 1) as RowNumber from medication " +
-                "WHERE (casereportid = ?)) eoo " +
-                "WHERE RowNumber > ? ORDER BY startdate DESC LIMIT 10;";
-        PreparedStatement ps = conn.prepareStatement(query);
-        ps.setInt(1, caseID);
-        ps.setInt(2,10*pageNo);
-        return ps.executeQuery();
-    }
-    public static ResultSet searchMed(int caseID) throws SQLException {
-        Connection conn = DataAccess.connect();
-        String query =  "SELECT name, startdate, duration, usuagenotes FROM medication " +
-                "WHERE (casereportid = ?) " +
-                "ORDER BY startdate DESC LIMIT 5 ;";
-        PreparedStatement ps = conn.prepareStatement(query);
-        ps.setInt(1, caseID);
-        return ps.executeQuery();
+    public static ArrayList<Medication> getActiveMed(int patientID) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        ArrayList<Medication> results = new ArrayList<>();
+        try {
+            conn = DataAccess.connect();
+            String query = "SELECT medname, startdate, duration, usagenotes, Enddate, casereportid from " +
+                    "(SELECT *, startdate + interval '1' day * duration as Enddate from medication " +
+                    "INNER JOIN casereports " +
+                    "ON medication.casereportid = casereports.id " +
+                    "WHERE (patientid = ?)) uoo " +
+                    "WHERE startdate < localtimestamp at time zone 'UTC' AND Enddate > localtimestamp at time zone 'UTC' ORDER BY startdate DESC;";
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, patientID);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                LocalDate startDate = rs.getDate("startdate").toLocalDate();
+                int duration = rs.getInt("duration");
+                String name = rs.getString("medname");
+                String usage = rs.getString("usagenotes");
+                int caseID = rs.getInt("casereportid");
+
+                Medication newMed = new Medication(name, startDate, duration, usage, caseID);
+                results.add(newMed);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
+        return results;
     }
     public static ArrayList<Medication> loadMedications(int caseID) {
         Connection conn = null;
@@ -792,15 +808,9 @@ public class DataAccess {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try {
-                rs.close();
-            } catch (Exception e) { /* ignored */ }
-            try {
-                ps.close();
-            } catch (Exception e) { /* ignored */ }
-            try {
-                conn.close();
-            } catch (Exception e) { /* ignored */ }
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return results;
     }

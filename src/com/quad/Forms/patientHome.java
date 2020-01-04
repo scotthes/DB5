@@ -4,9 +4,11 @@ import com.quad.AutoCompletion;
 import com.quad.ClientData.CaseReport;
 import com.quad.ClientData.Medication;
 import com.quad.ClientData.Patient;
+import com.quad.DataAccess;
 import com.quad.Global;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -101,13 +103,9 @@ public class patientHome extends JFrame {
     }
 
     private void medListSetup(){
-        for (CaseReport report : reports) {
-            report.loadMedications();
-            if (report.getMedSize()!=0) {
-                Medication med1 = report.getMed(0);
-                String name = med1.getName();
-                medsBox.addItem(name);
-            }
+        ArrayList<Medication> ActiveMeds = DataAccess.getActiveMed(Global.ActivePatient.getID());
+        for (Medication med : ActiveMeds){
+            medsBox.addItem(med.getName());
         }
     }
 

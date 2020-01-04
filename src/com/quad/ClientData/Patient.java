@@ -26,8 +26,7 @@ public class Patient extends Person {
         PhoneNum = PhoneNumIn;
         Address = AddressIn;
         // date is converted into format that is more easily parsed into SQL Date type
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy MMMM dd");
-        DateTimeFormatter dtf = new DateTimeFormatterBuilder().parseCaseInsensitive().parseLenient().append(f).toFormatter();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
         DateOfBirth = LocalDate.parse(DateOBIn, dtf);
     }
 

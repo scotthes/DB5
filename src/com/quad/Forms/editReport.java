@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class editReport extends JFrame{
     private JTextArea caseNotesInput;
@@ -58,7 +59,7 @@ public class editReport extends JFrame{
         }
 
         setContentPane(newReportPanel);
-        getRootPane().setDefaultButton(OKButton);
+        getRootPane().setDefaultButton(prevComButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         OKButton.addActionListener(new ActionListener() {
@@ -79,10 +80,12 @@ public class editReport extends JFrame{
             public void actionPerformed(ActionEvent actionEvent) {
                 if (commentsIterator == 0){
                     caseR.getNote(0).setText(caseNotesInput.getText());
+                    //caseNotesInput.setEditable(false);
                 }
                 commentsIterator++;
                 if (commentsIterator == caseR.getNotesSize()){
                     commentsIterator = 0;
+                    //caseNotesInput.setEditable(true);
                 }
                 fillComments(caseR.getNote(commentsIterator));
             }
@@ -117,7 +120,12 @@ public class editReport extends JFrame{
         Note note = new Note(now, noteText, CR.getCaseID());
         note.save();
 
-        LocalDate startDate = LocalDate.now(); //CHANGE TO GET START DATE FROM COMBO BOXES
+        String day = (String) dayBox.getSelectedItem(); //Day OB
+        String month = (String) monthBox.getSelectedItem(); //Month OB
+        String year = (String) yearBox.getSelectedItem(); //Year OB
+        String start = year+" "+month+" "+day;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
+        LocalDate startDate = LocalDate.parse(start, dtf);
         String medName = medInput.getText();
         int duration = (int) durationBox.getSelectedItem();
         Medication med = new Medication(medName,startDate, duration, "", CR.getCaseID());
@@ -188,6 +196,13 @@ public class editReport extends JFrame{
 
         if (caseR.getMedSize()!=0){
             medInput.setText(caseR.getMed(0).getName());
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d");
+            dayBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
+            dtf = DateTimeFormatter.ofPattern("MMMM");
+            monthBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
+            dtf = DateTimeFormatter.ofPattern("yyyy");
+            System.out.println(dtf.format(caseR.getMed(0).getStartDate()));
+            yearBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
             durationBox.setSelectedItem(String.valueOf(caseR.getMed(0).getDuration()));
         }
 
@@ -202,6 +217,17 @@ public class editReport extends JFrame{
         for(int i = 0; i < 1000; i ++){
             durationBox.addItem(i);
         }
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy");
+        int currentYear = Integer.parseInt(dtf.format(LocalDateTime.now()));
+        for (int i = 2000; i<currentYear+20; i++){
+            yearBox.addItem(String.valueOf(i));
+        }
+        yearBox.setSelectedItem(dtf.format(LocalDate.now()));
+        dtf = DateTimeFormatter.ofPattern("MMMM");
+        monthBox.setSelectedItem(dtf.format(LocalDate.now()));
+        dtf = DateTimeFormatter.ofPattern("d");
+        dayBox.setSelectedItem(dtf.format(LocalDate.now()));
+
     }
 
     private void goBack(){
