@@ -25,6 +25,7 @@ public class searchResults extends JFrame{
     private JButton button9;
     private JButton button10;
     private JButton nextPageButton;
+    private JButton backButton;
     private ArrayList<JButton> resultsButtons = new ArrayList<>();
 
 
@@ -47,14 +48,7 @@ public class searchResults extends JFrame{
         searchAgainButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (pageNo == 0){
-                    goBack(user);
-                }
-                else{
-                    int nextPage=pageNo-1;
-                    changePage(nextPage, pSearch, user);
-                }
-
+                goBack(user);
             }
         });
 
@@ -90,6 +84,18 @@ public class searchResults extends JFrame{
                 }
             });
         }
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (pageNo == 0){
+                    goBack(user);
+                }
+                else{
+                    int nextPage=pageNo-1;
+                    changePage(nextPage, pSearch, user);
+                }
+            }
+        });
     }
 
     private void changePage(int nextPage, Person pSearch, int user) {
@@ -124,7 +130,7 @@ public class searchResults extends JFrame{
 
 
     private void setButtons(ArrayList results, int resultsCount){
-        titleLabel.setText(String.format("%d Results Were Found", resultsCount));
+        titleLabel.setText(String.format("%d Result(s) Found", resultsCount));
         searchAgainButton.setText("Search Again");
         nextPageButton.setText("Next Page");
         resultsButtons.add(button1);
@@ -141,7 +147,7 @@ public class searchResults extends JFrame{
             resultsButtons.get(i).setText((String) results.get(i));
         }
         for(int i = results.size(); i < 10; i++){
-            resultsButtons.get(i).setText("");
+            resultsButtons.get(i).setVisible(false);
         }
     }
     public static void main(String[] args) {
