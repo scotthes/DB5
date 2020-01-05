@@ -63,7 +63,12 @@ public class patientHome extends JFrame {
         goButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                goEditReport(reports.get(existingReportsBox.getSelectedIndex()));
+                try {
+                    goEditReport(reports.get(existingReportsBox.getSelectedIndex()));
+                } catch (Exception e) {
+                    /* ignored out of bounds exception */
+                    JOptionPane.showMessageDialog(null, "No existing case report selected");
+                }
             }
         });
     }

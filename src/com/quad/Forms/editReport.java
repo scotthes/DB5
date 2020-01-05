@@ -51,11 +51,12 @@ public class editReport extends JFrame{
         }
         else if(Global.ActivePatient.getID() == 0){
             setupForAdmin();
+            titleLabel.setText(String.format("Case Report For %s" , caseR.getPatientName()));
         }
         else{
             caseR.loadNotes();
             caseR.loadMedications();
-            fillExisting(caseR);
+            fillExisting();
             titleLabel.setText(String.format("Case Report For %s" , Global.ActivePatient.getName()));
         }
 
@@ -81,12 +82,16 @@ public class editReport extends JFrame{
             public void actionPerformed(ActionEvent actionEvent) {
                 if (commentsIterator == 0){
                     caseR.getNote(0).setText(caseNotesInput.getText());
-                    //caseNotesInput.setEditable(false);
+                    caseNotesInput.setEditable(false);  // Comments box is uneditable when viewing previous comments
+                    pack();                             // making uneditable messes up sizing, so page size is refreshed
+                    setSize(1200, 600);
                 }
                 commentsIterator++;
                 if (commentsIterator == caseR.getNotesSize()){
                     commentsIterator = 0;
-                    //caseNotesInput.setEditable(true);
+                    caseNotesInput.setEditable(true);
+                    pack();
+                    setSize(1200, 600);
                 }
                 fillComments(caseR.getNote(commentsIterator));
             }
@@ -117,16 +122,22 @@ public class editReport extends JFrame{
         CR.save();
 
         LocalDateTime now = LocalDateTime.now();
-        String noteText = caseNotesInput.getText();
-        Note note = new Note(now, noteText, CR.getCaseID());
-        note.save();
+        if (commentsIterator != 0) {
+            caseR.getNote(0).save();
+        }
+        else {
+            String noteText = caseNotesInput.getText();
+            Note note = new Note(now, noteText, CR.getCaseID());
+            note.save();
+        }
+
 
         String day = (String) dayBox.getSelectedItem(); //Day OB
         String month = (String) monthBox.getSelectedItem(); //Month OB
         String year = (String) yearBox.getSelectedItem(); //Year OB
-        String start = year+" "+month+" "+day;
+        String start = year+" "+month+" "+day;  //gets start date as a string
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
-        LocalDate startDate = LocalDate.parse(start, dtf);
+        LocalDate startDate = LocalDate.parse(start, dtf); //converts date string to LocalDate
         String medName = medInput.getText();
         int duration = Integer.parseInt((String) Objects.requireNonNull(durationBox.getSelectedItem()));
         Medication med = new Medication(medName,startDate, duration, "", CR.getCaseID());
@@ -134,22 +145,22 @@ public class editReport extends JFrame{
             if(!med.equals(caseR.getMed(0))){
                 med.save();
             }
-        }
+        } //if there are existing medications for this case report, only saves the entered medication if it has been edited
         else{
             med.save();
-        }
+        } //if there are no existing medications for this case report, then saves the entered medication
     }
 
     private void setupForAdmin(){
         caseR.loadNotes();
         caseR.loadMedications();
-        fillExisting(caseR);
-        titleLabel.setText("Case Report");
+        fillExisting();
         conditionText.setEditable(false);
         durationBox.setEditable(false);
         medInput.setEditable(false);
         caseNotesInput.setEditable(false);
         browseButton.setVisible(false);
+        // Admin cant edit fields or set picture
     }
 
     private boolean isConditionChronic(){
@@ -190,7 +201,7 @@ public class editReport extends JFrame{
         }
     }
 
-    private void fillExisting(CaseReport caseR){
+    private void fillExisting(){
         conditionText.setText(caseR.getCondition());
         yesCheckBox.setSelected(caseR.getChronic());
         noCheckBox.setSelected(!caseR.getChronic());
