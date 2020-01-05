@@ -77,4 +77,8 @@ public class GP extends Person {
     public ArrayList<CaseReport> loadCaseReports(){
         return DataAccess.searchCaseReport(0, this.getID());
     }
+
+    public GP getPrev(){
+        return DataAccess.getPrevGP(this);
+    }
 }

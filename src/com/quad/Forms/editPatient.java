@@ -43,6 +43,19 @@ public class editPatient extends JFrame {
         setContentPane(patientEditPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        if (currentPatient.getTStamp() != null){
+            nameField.setEditable(false);
+            emailField.setEditable(false);
+            phoneField.setEditable(false);
+            addressField.setEditable(false);
+            textField1.setEditable(false);
+            dayBox.setEditable(false);
+            monthBox.setEditable(false);
+            yearBox.setEditable(false);
+            medCentreBox.setEditable(false);
+            button1.setVisible(false);
+        }
+
         chosenImage = InputStream.nullInputStream();
         try {
             image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(currentPatient.getPicture()))));
@@ -53,7 +66,9 @@ public class editPatient extends JFrame {
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                saveInfo(currentPatient.getID());
+                if (currentPatient.getTStamp() == null){
+                    saveInfo(currentPatient.getID());
+                } // will not save info when viewing legacy patient info via the vuew previous edits button
                 Return();
             }
         });
@@ -81,7 +96,8 @@ public class editPatient extends JFrame {
         viewPreviousEditsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //Henry DO LKE CASE REPORTS
+                Patient pNew =  currentPatient.getPrev();
+                refresh(pNew);
             }
         });
         enlargeImageButton.addActionListener(new ActionListener() {
@@ -102,6 +118,12 @@ public class editPatient extends JFrame {
                 viewImage.setVisible(true);
             }
         });
+    }
+
+    private void refresh(Patient p){
+        editPatient frame = new editPatient(p);
+        Global.frameSetup(frame, this);
+        dispose();
     }
 
     private void logout() {

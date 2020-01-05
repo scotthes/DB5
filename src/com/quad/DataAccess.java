@@ -220,8 +220,15 @@ public class DataAccess {
         InputStream pic = InputStream.nullInputStream();
         try {
             conn = DataAccess.connect();
-            String query = "Select picture from patients where id = ?";
-            ps = conn.prepareStatement(query);
+            if (input.getTStamp() == null){
+                String query = "Select picture from patients where id = ?";
+                ps = conn.prepareStatement(query);
+            }
+            else {
+                String query = "Select picture from patient_history where id = ? and tstamp = ?";
+                ps = conn.prepareStatement(query);
+                ps.setTimestamp(2, Timestamp.valueOf(input.getTStamp()));
+            }
             ps.setInt(1, input.getID());
             rs = ps.executeQuery();
             boolean k = rs.next();
@@ -258,6 +265,79 @@ public class DataAccess {
         }
         return name;
 
+    }
+
+    public static Patient getPrevPatient(Patient input){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Patient result = new Patient(" ", " ", null, 0, " ", " ", "1915 January 1");
+        try {
+            conn = DataAccess.connect();
+            String query = "SELECT tstamp, patient_history.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd from patient_history " +
+                    "INNER JOIN medicalcentre " +
+                    "ON patient_history.medicalcentre = medicalcentre.id " +                //this is not an error, regardless of what intellij says!
+                    "WHERE patient_history.id = ? AND tstamp < ? ORDER BY tstamp desc LIMIT 1 ;";
+            Timestamp t;
+            if (input.getTStamp() == null){
+                t = Timestamp.valueOf(LocalDateTime.now());
+            }
+            else {
+                t = Timestamp.valueOf(input.getTStamp());
+            }
+
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, input.getID());
+            ps.setTimestamp(2, t);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String nameIn = rs.getString("fullname");
+                String emailIn = rs.getString("emailadd");
+                int idIn = rs.getInt("id");
+                String phoneIn = rs.getString("phonenumber");
+                String addressIn = rs.getString("patientadd");
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
+                String DOBin = dtf.format(rs.getDate("dob").toLocalDate());
+                int mcid = rs.getInt("medicalcentre");
+                String mcName = rs.getString("mcname");
+                String mcAdd = rs.getString("mcadd");
+                MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
+                result = new Patient(nameIn, emailIn, MedCIn, idIn, phoneIn, addressIn, DOBin);
+                result.setTStamp(rs.getTimestamp("tstamp").toLocalDateTime());
+            }
+            else {
+                query = "SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd from patients " +
+                        "INNER JOIN medicalcentre " +
+                        "ON patients.medicalcentre = medicalcentre.id " +
+                        "WHERE patients.id = ? ;";
+
+                ps = conn.prepareStatement(query);
+                ps.setInt(1, input.getID());
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    String nameIn = rs.getString("fullname");
+                    String emailIn = rs.getString("emailadd");
+                    int idIn = rs.getInt("id");
+                    String phoneIn = rs.getString("phonenumber");
+                    String addressIn = rs.getString("patientadd");
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
+                    String DOBin = dtf.format(rs.getDate("dob").toLocalDate());
+                    int mcid = rs.getInt("medicalcentre");
+                    String mcName = rs.getString("mcname");
+                    String mcAdd = rs.getString("mcadd");
+                    MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
+                    result = new Patient(nameIn, emailIn, MedCIn, idIn, phoneIn, addressIn, DOBin);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
+        return result;
     }
     /*===================================================================================================================================*/
     /*==============================                              GP QUERIES                               ==============================*/
@@ -464,8 +544,15 @@ public class DataAccess {
         InputStream pic = InputStream.nullInputStream();
         try {
             conn = DataAccess.connect();
-            String query = "Select picture from GP where id = ?";
-            ps = conn.prepareStatement(query);
+            if (input.getTStamp() == null){
+                String query = "Select picture from gp where id = ?";
+                ps = conn.prepareStatement(query);
+            }
+            else {
+                String query = "Select picture from gp_history where id = ? and tstamp = ?";
+                ps = conn.prepareStatement(query);
+                ps.setTimestamp(2, Timestamp.valueOf(input.getTStamp()));
+            }
             ps.setInt(1, input.getID());
             rs = ps.executeQuery();
             boolean k = rs.next();
@@ -479,6 +566,76 @@ public class DataAccess {
         }
         return pic;
     }
+
+    public static GP getPrevGP(GP input){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        GP result = new GP(" ", " ", null, 0, " ", " ", " ");
+        try {
+            conn = DataAccess.connect();
+            String query = "SELECT tstamp, gp_history.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd from gp_history " +
+                    "INNER JOIN medicalcentre " +
+                    "ON gp_history.medicalcentreid = medicalcentre.id " +
+                    "WHERE gp_history.id = ? AND tstamp < ? ORDER BY tstamp desc LIMIT 1 ;";
+            Timestamp t;
+            if (input.getTStamp() == null){
+                t = Timestamp.valueOf(LocalDateTime.now());
+            }
+            else {
+                t = Timestamp.valueOf(input.getTStamp());
+            }
+
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, input.getID());
+            ps.setTimestamp(2, t);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String nameIn = rs.getString("fullname");
+                String emailIn = rs.getString("emailadd");
+                int idIn = rs.getInt("id");
+                String pagerIn = rs.getString("pagernum");
+                String usernameIn = rs.getString("username");
+                int mcid = rs.getInt("medicalcentreid");
+                String mcName = rs.getString("mcname");
+                String mcAdd = rs.getString("mcadd");
+                MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
+                result = new GP(nameIn, emailIn, MedCIn, idIn, pagerIn, usernameIn, "");
+                result.setTStamp(rs.getTimestamp("tstamp").toLocalDateTime());
+            }
+            else {
+                query = "SELECT gp.id, fullname, pagernum, username, emailadd, medicalcentreid, mcname, mcadd from gp " +
+                        "INNER JOIN medicalcentre " +
+                        "ON gp.medicalcentreid = medicalcentre.id " +
+                        "WHERE gp.id = ? ;";
+
+                ps = conn.prepareStatement(query);
+                ps.setInt(1, input.getID());
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    String nameIn = rs.getString("fullname");
+                    String emailIn = rs.getString("emailadd");
+                    int idIn = rs.getInt("id");
+                    String pagerIn = rs.getString("pagernum");
+                    String usernameIn = rs.getString("username");
+                    int mcid = rs.getInt("medicalcentreid");
+                    String mcName = rs.getString("mcname");
+                    String mcAdd = rs.getString("mcadd");
+                    MedCentre MedCIn = new MedCentre(mcName, mcAdd, mcid);
+                    result = new GP(nameIn, emailIn, MedCIn, idIn, pagerIn, usernameIn, "");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
+        return result;
+    }
+
     /*===================================================================================================================================*/
     /*==============================                        MEDICAL CENTRE QUERIES                         ==============================*/
     /*===================================================================================================================================*/
@@ -665,6 +822,59 @@ public class DataAccess {
         }
         return results;
 
+    }
+
+    public static void saveCasePic(InputStream input, int caseID) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DataAccess.connect();
+            String query = "INSERT INTO casepics " +
+                    "(caseid, picture, tstamp) " +
+                    "VALUES (?, ?, now());";
+            ps = conn.prepareStatement(query);
+            if (input.available() != 0){
+            byte[] targetArray = new byte[0];
+            try {
+                targetArray = new byte[input.available()];
+                input.read(targetArray);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ps.setInt(1, caseID);
+            ps.setBytes(2, targetArray);
+                ps.executeUpdate();
+            }
+        }catch (SQLException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
+    }
+
+    public static InputStream loadCasePic(int caseID) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        InputStream pic = InputStream.nullInputStream();
+        try {
+            conn = DataAccess.connect();
+            String query = "SELECT picture FROM casepics " +
+                    "WHERE caseid = ? ORDER BY tstamp DESC LIMIT 1";
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, caseID);
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                pic = new ByteArrayInputStream(rs.getBytes("picture"));
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
+        }
+        return pic;
     }
     /*===================================================================================================================================*/
     /*==============================                             NOTE QUERIES                              ==============================*/

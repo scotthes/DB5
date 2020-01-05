@@ -4,6 +4,7 @@ import com.quad.DataAccess;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Medication {
     private String Name;
@@ -44,15 +45,11 @@ public class Medication {
     }
 
     public boolean equals(Medication test){
-        if ((this.getStartDate() == test.getStartDate()) &&
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
+        return (dtf.format(this.getStartDate()).equals(dtf.format(test.getStartDate()))) &&
                 (this.getDuration() == test.getDuration()) &&
-                (this.getName() == test.getName()) &&
-                (this.getUsageNotes().equals(test.getUsageNotes()))){
-            return true;
-        }
-        else {
-            return false;
-        }
+                (this.getName().equals(test.getName())) &&
+                (this.getUsageNotes().equals(test.getUsageNotes()));
     }
 
     public void save() {

@@ -42,6 +42,16 @@ public class editGP extends JFrame{
         setContentPane(GPPanel);
         getRootPane().setDefaultButton(OKButton);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        if (currentGP.getTStamp() != null){
+            textField1.setEditable(false);
+            textField2.setEditable(false);
+            textField3.setEditable(false);
+            textField5.setEditable(false);
+            textField6.setEditable(false);
+            photoAddress.setEditable(false);
+            medCentreBox.setEditable(false);
+            button1.setVisible(false);
+        }
         theImage = InputStream.nullInputStream();
         try {
             image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(currentGP.getPicture()))));
@@ -85,7 +95,8 @@ public class editGP extends JFrame{
         viewPreiviousEditsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //HENRY DO LKE YOU DID FOR CASE REPORTS
+                GP gpNew = currentGP.getPrev();
+                refresh(gpNew);
             }
         });
         enlargeImageButton.addActionListener(new ActionListener() {
@@ -124,6 +135,12 @@ public class editGP extends JFrame{
         dispose();
         adminOptions frame = new adminOptions();
         Global.frameSetup(frame, this);
+    }
+
+    private void refresh(GP gp) {
+        editGP frame = new editGP(gp);
+        Global.frameSetup(frame, this);
+        dispose();
     }
 
     private void fillExistingDetails(GP currentGP){

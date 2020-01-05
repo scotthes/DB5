@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 public class editReport extends JFrame{
     private JTextArea caseNotesInput;
@@ -34,7 +33,7 @@ public class editReport extends JFrame{
     private JComboBox dayBox;
     private JComboBox monthBox;
     private JComboBox yearBox;
-    private JComboBox<Integer> durationBox;
+    private JComboBox<String> durationBox;
     private boolean isChronic;
     private InputStream chosenImage;
     private int commentsIterator;
@@ -97,7 +96,7 @@ public class editReport extends JFrame{
             }
         });
 
-        chosenImage = Global.ActivePatient.getPicture();
+        chosenImage = InputStream.nullInputStream();
 
         browseButton.addActionListener(new ActionListener() {
             @Override
@@ -120,16 +119,17 @@ public class editReport extends JFrame{
             CR.setChronic(isChronic);
         }
         CR.save();
+        CR.saveImage(chosenImage);
 
         LocalDateTime now = LocalDateTime.now();
         if (commentsIterator != 0) {
             caseR.getNote(0).save();
-        }
+        }  // if view previous comments and press save, saves the stored new edited comment
         else {
             String noteText = caseNotesInput.getText();
             Note note = new Note(now, noteText, CR.getCaseID());
             note.save();
-        }
+        }  // otherwise just saves the content of the comment box (aka the non-stored new comment)
 
 
         String day = (String) dayBox.getSelectedItem(); //Day OB
@@ -139,8 +139,9 @@ public class editReport extends JFrame{
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
         LocalDate startDate = LocalDate.parse(start, dtf); //converts date string to LocalDate
         String medName = medInput.getText();
-        int duration = Integer.parseInt((String) Objects.requireNonNull(durationBox.getSelectedItem()));
+        int duration = Integer.parseInt((String) durationBox.getSelectedItem());
         Medication med = new Medication(medName,startDate, duration, "", CR.getCaseID());
+        System.out.println(caseR.getMedSize());
         if(caseR.getMedSize()!=0){
             if(!med.equals(caseR.getMed(0))){
                 med.save();
@@ -217,7 +218,11 @@ public class editReport extends JFrame{
             yearBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
             durationBox.setSelectedItem(String.valueOf(caseR.getMed(0).getDuration()));
         }
-
+        try {
+            image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(caseR.loadImage()))));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         fillComments(caseR.getNote(0));
     }
     private void fillComments(Note note){
@@ -226,8 +231,8 @@ public class editReport extends JFrame{
 
     private void comboBoxSetup(){
         AutoCompletion.enable(durationBox); //Enable searchable combobox
-        for(int i = 0; i < 1000; i ++){
-            durationBox.addItem(i);
+        for(int i = 1; i < 1000; i ++){
+            durationBox.addItem(String.valueOf(i));
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy");
         int currentYear = Integer.parseInt(dtf.format(LocalDateTime.now()));
@@ -264,4 +269,5 @@ public class editReport extends JFrame{
         frame2.setVisible(true);
         frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
 }

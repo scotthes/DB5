@@ -1,11 +1,7 @@
 package com.quad.ClientData;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public abstract class Person {
@@ -13,6 +9,7 @@ public abstract class Person {
     private String Email;
     private int ID;
     private MedCentre MedC;
+    LocalDateTime TStamp;
     public Person(String NameIn,
                   String EmailIn,
                   MedCentre MedCIn,
@@ -21,6 +18,7 @@ public abstract class Person {
         Email = EmailIn;
         MedC = MedCIn;
         ID = IDIn;
+        TStamp = null;
     }
     public abstract int searchCount();
 
@@ -52,6 +50,14 @@ public abstract class Person {
 
     public int getID() {
         return ID;
+    }
+
+    public void setTStamp(LocalDateTime tIn) {
+        TStamp = tIn;
+    }
+
+    public LocalDateTime getTStamp() {
+        return TStamp;
     }
 
     public abstract InputStream getPicture();

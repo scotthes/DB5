@@ -79,6 +79,10 @@ public class Patient extends Person {
         return null;
     }
 
+    public Patient getPrev() {
+       return DataAccess.getPrevPatient(this);
+    }
+
     @Override
     public int searchCount() {
         return DataAccess.searchPatientCount(this);

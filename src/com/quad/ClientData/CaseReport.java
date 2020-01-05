@@ -2,6 +2,7 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,5 +106,13 @@ public class CaseReport {
         else {
             DataAccess.updateCaseReport(this);
         }
+    }
+
+    public void saveImage(InputStream image){
+        DataAccess.saveCasePic(image, this.getCaseID());
+    }
+
+    public InputStream loadImage() {
+        return DataAccess.loadCasePic(this.getCaseID());
     }
 }

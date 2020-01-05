@@ -23,7 +23,12 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
+        <schema name="pg_catalog" object-types="table, function, view" />
+        <schema name="public" object-types="column, table, function, view" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="fffb3fe7-9e5b-4793-bbb9-bc50cb6c4aee">
@@ -188,7 +193,16 @@ WHERE RowNumber > 0 ORDER BY notedate desc LIMIT 10 ;
 SELECT * from notes
 
 insert into notes (notedate, note, casereportid)
-values (now(), 'Take more meds', 8)]]></console>
+values (now(), 'Take more meds', 8)
+
+create table casepics(
+caseid int,
+picture bytea,
+tstamp timestamp 
+);
+
+select * from casepics
+delete from casepics where caseid = 13]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
