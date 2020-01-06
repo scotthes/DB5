@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class editReport extends JFrame{
     private JTextArea caseNotesInput;
@@ -32,8 +33,11 @@ public class editReport extends JFrame{
     private JButton cancelButton;
     private JComboBox dayBox;
     private JComboBox monthBox;
-    private JComboBox yearBox;
+    private JComboBox<String> yearBox;
     private JComboBox<String> durationBox;
+    private JButton newMedButton;
+    private JButton enlargeImageButton;
+    private JComboBox<String> crMeds;
     private boolean isChronic;
     private InputStream chosenImage;
     private int commentsIterator;
@@ -111,6 +115,36 @@ public class editReport extends JFrame{
                 goBack();
             }
         });
+        newMedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                saveCurrentMed();
+                medInput.setText("");
+                durationBox.setSelectedItem(0);
+                dayBox.setSelectedItem(0);
+                monthBox.setSelectedItem(0);
+                yearBox.setSelectedItem(0);
+                refresh();
+            }
+        });
+        enlargeImageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFrame viewImage = new JFrame();
+                ImageIcon icon = null;
+                try {
+                    icon = new ImageIcon((ImageIO.read(caseR.loadImage())));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                JLabel label = new JLabel(icon);
+                viewImage.setLocation(getLocation());
+                viewImage.add(label);
+                viewImage.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                viewImage.pack();
+                viewImage.setVisible(true);
+            }
+        });
     }
 
     private void saveInfo(CaseReport caseR){
@@ -131,7 +165,10 @@ public class editReport extends JFrame{
             note.save();
         }  // otherwise just saves the content of the comment box (aka the non-stored new comment)
 
+        //saveCurrentMed();  DON't NEED TO SAVE TWICE
+    }
 
+    private void saveCurrentMed(){
         String day = (String) dayBox.getSelectedItem(); //Day OB
         String month = (String) monthBox.getSelectedItem(); //Month OB
         String year = (String) yearBox.getSelectedItem(); //Year OB
@@ -139,8 +176,8 @@ public class editReport extends JFrame{
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM d");
         LocalDate startDate = LocalDate.parse(start, dtf); //converts date string to LocalDate
         String medName = medInput.getText();
-        int duration = Integer.parseInt((String) durationBox.getSelectedItem());
-        Medication med = new Medication(medName,startDate, duration, "", CR.getCaseID());
+        int duration = Integer.parseInt((String) Objects.requireNonNull(durationBox.getSelectedItem()));
+        Medication med = new Medication(medName,startDate, duration, "", caseR.getCaseID());
         System.out.println(caseR.getMedSize());
         if(caseR.getMedSize()!=0){
             if(!med.equals(caseR.getMed(0))){
@@ -161,6 +198,7 @@ public class editReport extends JFrame{
         medInput.setEditable(false);
         caseNotesInput.setEditable(false);
         browseButton.setVisible(false);
+        newMedButton.setVisible(false);
         // Admin cant edit fields or set picture
     }
 
@@ -208,6 +246,10 @@ public class editReport extends JFrame{
         noCheckBox.setSelected(!caseR.getChronic());
 
         if (caseR.getMedSize()!=0){
+            for(int i = 0; i < caseR.getMedSize(); i++){
+                Medication med = caseR.getMed(i);
+                crMeds.addItem(med.getName()) ;
+            }
             medInput.setText(caseR.getMed(0).getName());
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d");
             dayBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
@@ -256,6 +298,12 @@ public class editReport extends JFrame{
         frame.setLocation(this.getLocation());
         frame.setVisible(true);
         dispose();
+    }
+
+    private void refresh(){
+        dispose();
+        editReport frame = new editReport(caseR);
+        Global.frameSetup(frame, this);
     }
 
     public static void main(String[] args) {

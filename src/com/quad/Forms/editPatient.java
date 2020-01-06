@@ -68,7 +68,7 @@ public class editPatient extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (currentPatient.getTStamp() == null){
                     saveInfo(currentPatient.getID());
-                } // will not save info when viewing legacy patient info via the vuew previous edits button
+                } // will not save info when viewing legacy patient info via the view previous edits button
                 Return();
             }
         });
@@ -103,6 +103,7 @@ public class editPatient extends JFrame {
         enlargeImageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                refresh(currentPatient);
                 JFrame viewImage = new JFrame();
                 ImageIcon icon = null;
                 try {
