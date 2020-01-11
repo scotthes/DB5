@@ -145,6 +145,12 @@ public class editReport extends JFrame{
                 viewImage.setVisible(true);
             }
         });
+        crMeds.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fillMed(caseR.getMed(crMeds.getSelectedIndex()));
+            }
+        });
     }
 
     private void saveInfo(CaseReport caseR){
@@ -250,15 +256,7 @@ public class editReport extends JFrame{
                 Medication med = caseR.getMed(i);
                 crMeds.addItem(med.getName()) ;
             }
-            medInput.setText(caseR.getMed(0).getName());
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d");
-            dayBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
-            dtf = DateTimeFormatter.ofPattern("MMMM");
-            monthBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
-            dtf = DateTimeFormatter.ofPattern("yyyy");
-            System.out.println(dtf.format(caseR.getMed(0).getStartDate()));
-            yearBox.setSelectedItem(dtf.format(caseR.getMed(0).getStartDate()));
-            durationBox.setSelectedItem(String.valueOf(caseR.getMed(0).getDuration()));
+            fillMed(caseR.getMed(0));
         }
         try {
             image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(caseR.loadImage()))));
@@ -266,6 +264,17 @@ public class editReport extends JFrame{
             e.printStackTrace();
         }
         fillComments(caseR.getNote(0));
+    }
+
+    private void fillMed(Medication Med){
+        medInput.setText(Med.getName());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d");
+        dayBox.setSelectedItem(dtf.format(Med.getStartDate()));
+        dtf = DateTimeFormatter.ofPattern("MMMM");
+        monthBox.setSelectedItem(dtf.format(Med.getStartDate()));
+        dtf = DateTimeFormatter.ofPattern("yyyy");
+        yearBox.setSelectedItem(dtf.format(Med.getStartDate()));
+        durationBox.setSelectedItem(String.valueOf(Med.getDuration()));
     }
     private void fillComments(Note note){
         caseNotesInput.setText(note.getText());
