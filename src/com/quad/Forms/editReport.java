@@ -47,6 +47,8 @@ public class editReport extends JFrame{
         comboBoxSetup();
         caseR = cR;
         caseNotesInput.setLineWrap(true); //Allow textfield input to wrap
+        enlargeImageButton.setVisible(false); //Don't allow user to see enlarge image button by default
+
 
         if (caseR.getCaseID() == 0){
             prevComButton.setVisible(false); //Do not display the previous comments button if it is a new report
@@ -260,6 +262,7 @@ public class editReport extends JFrame{
         }
         try {
             image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(caseR.loadImage()))));
+            enlargeImageButton.setVisible(true); //if there is a photo, allow user to enlarge
         } catch (Exception e) {
             e.printStackTrace();
         }

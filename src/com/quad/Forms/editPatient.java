@@ -7,6 +7,7 @@ import com.quad.Global;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,7 +20,6 @@ public class editPatient extends JFrame {
     private JButton OKButton;
     private JTextField nameField;
     private JTextField emailField;
-    //private JTextField idField;
     private JComboBox<String> medCentreBox;
     private JTextField phoneField;
     private JTextField addressField;
@@ -38,6 +38,7 @@ public class editPatient extends JFrame {
 
     editPatient(Patient currentPatient) {
         viewPreviousEditsButton.setVisible(false);
+        enlargeImageButton.setVisible(false);
         comboBoxSetup();
         fillExistingDetails(currentPatient);
         setContentPane(patientEditPanel);
@@ -59,6 +60,7 @@ public class editPatient extends JFrame {
         chosenImage = InputStream.nullInputStream();
         try {
             image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(currentPatient.getPicture()))));
+            enlargeImageButton.setVisible(true); //if there is an image, allow enlarge
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,10 +114,15 @@ public class editPatient extends JFrame {
                     e.printStackTrace();
                 }
                 JLabel label = new JLabel(icon);
+
+                //label.setMaximumSize(size);
                 viewImage.setLocation(getLocation());
                 viewImage.add(label);
                 viewImage.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 viewImage.pack();
+                Dimension size = new Dimension(700,400);
+                viewImage.setMaximumSize(size);
+                viewImage.setResizable(false);
                 viewImage.setVisible(true);
             }
         });

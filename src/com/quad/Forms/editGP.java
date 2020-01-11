@@ -37,6 +37,7 @@ public class editGP extends JFrame{
     editGP(GP currentGP){
         viewPreiviousEditsButton.setVisible(false);
         reportsButton.setVisible(false);
+        enlargeImageButton.setVisible(false);
         setupComboBox();
         fillExistingDetails(currentGP);
         setContentPane(GPPanel);
@@ -55,6 +56,7 @@ public class editGP extends JFrame{
         theImage = InputStream.nullInputStream();
         try {
             image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(currentGP.getPicture()))));
+            enlargeImageButton.setVisible(true); // if there is an image, allow user to view
         } catch (Exception e) {
             e.printStackTrace();
         }

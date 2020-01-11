@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.quad.Forms.adminOptions">
-  <grid id="27dc6" binding="optionsPanel" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="optionsPanel" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
-    <properties/>
+    <properties>
+      <background color="-16745790"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="a401d" class="javax.swing.JButton" binding="newCentre">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
           <focusPainted value="false"/>
-          <text value="Medical Centre"/>
+          <foreground color="-1"/>
+          <text value="New Medical Centre"/>
         </properties>
       </component>
       <component id="97b38" class="javax.swing.JButton" binding="newPat">
@@ -25,6 +28,7 @@
         <properties>
           <contentAreaFilled value="false"/>
           <focusPainted value="false"/>
+          <foreground color="-1"/>
           <text value="New Patient"/>
         </properties>
       </component>
@@ -35,25 +39,28 @@
         <properties>
           <contentAreaFilled value="false"/>
           <focusPainted value="false"/>
+          <foreground color="-1"/>
           <text value="New GP"/>
         </properties>
       </component>
       <component id="480b1" class="javax.swing.JButton" binding="logOutButton" default-binding="true">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
           <focusPainted value="false"/>
+          <foreground color="-1"/>
           <text value="Log Out"/>
         </properties>
       </component>
       <component id="9f42b" class="javax.swing.JLabel" binding="TitleLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Droid Serif" size="26" style="1"/>
+          <font name="Dialog" size="26" style="1"/>
+          <foreground color="-1"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
           <text value="Admin Centre"/>
@@ -61,21 +68,23 @@
       </component>
       <component id="e97bd" class="javax.swing.JButton" binding="exPat">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
           <focusPainted value="false"/>
+          <foreground color="-1"/>
           <text value="Existing Patient"/>
         </properties>
       </component>
       <component id="bc451" class="javax.swing.JButton" binding="existingGPButton" default-binding="true">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
           <focusPainted value="false"/>
+          <foreground color="-1"/>
           <text value="Existing GP"/>
         </properties>
       </component>

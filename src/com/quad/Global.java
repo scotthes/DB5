@@ -25,7 +25,7 @@ public class Global {
 
     public static BufferedImage scaleImage(BufferedImage img) throws Exception {
         BufferedImage bi;
-        bi = new BufferedImage(40, 50, BufferedImage.TRANSLUCENT);
+        bi = new BufferedImage(80, 100, BufferedImage.TRANSLUCENT);
         Graphics2D g2d = (Graphics2D) bi.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
