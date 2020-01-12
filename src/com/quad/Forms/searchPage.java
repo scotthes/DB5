@@ -79,7 +79,7 @@ public class searchPage extends JFrame {
         String bDay = year+" "+month+" "+day;
 
         if (type == 2){
-            GP gSearch = new GP(name, null, null, 0,null, "","");
+            GP gSearch = new GP(name, null, null, 0,null, name,""); //can search by name or username
             int resultCount = gSearch.searchCount();
             if(resultCount == 0){
                 JOptionPane.showMessageDialog(null, "Sorry, no GP with those details can be found!");
@@ -104,18 +104,6 @@ public class searchPage extends JFrame {
         }
 
     }
-
-    private static BufferedImage scaleImage(BufferedImage img) throws Exception {
-        BufferedImage bi;
-        bi = new BufferedImage(60, 100, BufferedImage.TRANSLUCENT);
-        Graphics2D g2d = (Graphics2D) bi.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-        g2d.drawImage(img, 0, 0, 120, 120, null);
-        g2d.dispose();
-        return bi;
-    }
-
 
     public static void main(String[] args) {
         int blankInt = 3;

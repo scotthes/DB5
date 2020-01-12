@@ -71,7 +71,12 @@ public class editGP extends JFrame{
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                imageUpload();
+                try {
+                    imageUpload();
+                } catch (Exception e) {
+                    //exceptions occur when user cancels due to attempts to read/scale an image that is never selected,
+                    // this is not an issue so exceptions are ignored
+                }
             }
         });
 
@@ -194,27 +199,15 @@ public class editGP extends JFrame{
         }
     }
 
-    private void imageUpload(){
+    private void imageUpload() throws Exception {
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File f = chooser.getSelectedFile();
-        try {
-            theImage = new FileInputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        theImage = new FileInputStream(f);
         String filename = f.getAbsolutePath();
         photoAddress.setText(filename);
-        try {
-            image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(theImage))));
-        } catch (Exception e) {
-            e.getMessage();
-        }
-        try {
-            theImage = new FileInputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(theImage))));
+        theImage = new FileInputStream(f);
         System.out.println("Images were written succesfully.");
     }
 

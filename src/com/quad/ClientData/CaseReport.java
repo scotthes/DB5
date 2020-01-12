@@ -3,12 +3,10 @@ package com.quad.ClientData;
 import com.quad.DataAccess;
 
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class CaseReport {
     private String Condition;
@@ -38,10 +36,6 @@ public class CaseReport {
 
     public String getCondition() {
         return Condition;
-    }
-
-    public void setCondition(String condition) {
-        Condition = condition;
     }
 
     public int getGPID() {

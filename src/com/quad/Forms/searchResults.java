@@ -31,14 +31,14 @@ public class searchResults extends JFrame{
 
     searchResults(Person pSearch, int user, int pageNo) {
         setContentPane(searchResultsPanel);
-        int resultCount = pSearch.searchCount();
+        int resultCount = pSearch.searchCount(); //gets total number of matches from database
         System.out.println(resultCount);
-        ArrayList<Person> results = pSearch.search(pageNo);
+        ArrayList<Person> results = pSearch.search(pageNo); //only retrieves 10 at a time (max that can fit on page) to speed up search of there are many results
         ArrayList<String> namesResults = new ArrayList<>();
 
         for (Person result : results) {
             namesResults.add(result.getName() + " ----- " + result.getEmail());
-        }
+        } //gets names to add to buttons
 
         setButtons(namesResults, resultCount);
         //setContentPane(searchResultsPanel);

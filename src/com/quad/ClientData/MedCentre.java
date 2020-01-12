@@ -2,9 +2,6 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public class MedCentre {
     private String Name;
     private String Address;
