@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class DataAccess {
-    public static Connection connect(){
+    public static Connection connect(){ //establishes the connection to the database used by all the following methods
         String url = "jdbc:postgresql://ec2-54-195-252-243.eu-west-1.compute.amazonaws.com:5432/dbelilspt7ge3m";
         String user = "fjmisibystymlz";
         String password = "ebbd5d6575060e77fbf9aeb335c66bf4441cac094218713a75585511a6f7aae5";
@@ -38,7 +38,7 @@ public class DataAccess {
                     "(fullname, patientadd, emailadd, medicalcentre, phonenumber, dob, picture)" +
                     "values (?, ?, ?, ?, ?, ?, ?);";
             byte[] targetArray = new byte[0];
-            try {
+            try { //InputStream converted to byte array for storing in database
                 targetArray = new byte[pic.available()];
                 pic.read(targetArray);
             } catch (IOException e) {
@@ -57,8 +57,8 @@ public class DataAccess {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { ps.close(); } catch (Exception e) { /* ignored */ }
-            try { conn.close(); } catch (Exception e) { /* ignored */ }
+            try { ps.close(); } catch (Exception e) { /* ignored */ } //Failure to close occurs if failed to open,
+            try { conn.close(); } catch (Exception e) { /* ignored */ } // this would cause exception earlier so the one here is ignored
         }
     }
 
@@ -77,9 +77,9 @@ public class DataAccess {
                     "picture = COALESCE(?, picture) " +
                     "WHERE id = ?;";
             byte[] targetArray = new byte[0];
-            try {
+            try { //InputStream converted to byte array for storing in database
                 if (pic.available() == 0) {
-                    targetArray = null;
+                    targetArray = null; // setting byte array to null prevents it from overwriting existing pic in database when pic is unchanged
                 } else {
                     targetArray = new byte[pic.available()];
                     pic.read(targetArray);
@@ -101,7 +101,7 @@ public class DataAccess {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { ps.close(); } catch (Exception e) { /* ignored */ }
+            try { ps.close(); } catch (Exception e) { /* ignored */ } //all methods here are contained in same try..catch..finally for the same reasons (to ensure connections are closed safely and quitely)
             try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
@@ -128,7 +128,7 @@ public class DataAccess {
                 dateOB = null;
             } else {
                 dateOB = Date.valueOf(input.getDOBDate());
-            }
+            } //LocalDate converted to sql.Date for searching in database
             ps = conn.prepareStatement(query);
             ps.setString(1, "%" + input.getName() + "%");
             ps.setString(2, input.getName());
@@ -143,7 +143,7 @@ public class DataAccess {
             ps.setInt(11, 10 * pageNo); //only retrieves one page of results at a time
             rs = ps.executeQuery();
 
-            while (rs.next()) {
+            while (rs.next()) { //creates a patient from each row in the results ands to ArrayList
                 String nameIn = rs.getString("fullname");
                 String emailIn = rs.getString("emailadd");
                 int idIn = rs.getInt("id");
@@ -161,7 +161,7 @@ public class DataAccess {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { rs.close(); } catch (Exception e) { /* ignored */ } //rs included if it exists for this method
             try { ps.close(); } catch (Exception e) { /* ignored */ }
             try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
@@ -213,7 +213,7 @@ public class DataAccess {
         return count;
     }
 
-    public static InputStream getPatientPic(Patient input) {
+    public static InputStream getPatientPic(Patient input) { //pic loaded separately to rest of patient so that it is only loaded when it is needed. This speeds up program as pics are slow to load
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -276,11 +276,12 @@ public class DataAccess {
             conn = DataAccess.connect();
             String query = "SELECT tstamp, patient_history.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd from patient_history " +
                     "INNER JOIN medicalcentre " +
-                    "ON patient_history.medicalcentre = medicalcentre.id " +                //this is not an error, regardless of what intellij says!
-                    "WHERE patient_history.id = ? AND tstamp < ? ORDER BY tstamp desc LIMIT 1 ;";
+                    "ON patient_history.medicalcentre = medicalcentre.id " +
+                    "WHERE patient_history.id = ? AND tstamp < ? ORDER BY tstamp desc LIMIT 1 ;"; //iterates backwards through history table
+            // selecting patient where the timestamp is less that the current one
             Timestamp t;
             if (input.getTStamp() == null){
-                t = Timestamp.valueOf(LocalDateTime.now());
+                t = Timestamp.valueOf(LocalDateTime.now()); //if timestamp is null then patient details are the current details (not a previous edit), so sets timestamp to now
             }
             else {
                 t = Timestamp.valueOf(input.getTStamp());
@@ -291,7 +292,7 @@ public class DataAccess {
             ps.setTimestamp(2, t);
             rs = ps.executeQuery();
 
-            if (rs.next()) {
+            if (rs.next()) { //if previous details were were retrieved, then creates a patient object with them and returns it
                 String nameIn = rs.getString("fullname");
                 String emailIn = rs.getString("emailadd");
                 int idIn = rs.getInt("id");
@@ -306,7 +307,7 @@ public class DataAccess {
                 result = new Patient(nameIn, emailIn, MedCIn, idIn, phoneIn, addressIn, DOBin);
                 result.setTStamp(rs.getTimestamp("tstamp").toLocalDateTime());
             }
-            else {
+            else { //otherwise finds the current details of this patient and returns them. This causes this methods to 'loop' back to the current patient if continuosly called
                 query = "SELECT patients.id, fullname, phonenumber, emailadd, medicalcentre, patientadd, dob, mcname, mcadd from patients " +
                         "INNER JOIN medicalcentre " +
                         "ON patients.medicalcentre = medicalcentre.id " +
@@ -413,7 +414,7 @@ public class DataAccess {
         }
     }
 
-    public static ArrayList<Person> searchGP(@NotNull GP input, int pageNo) {
+    public static ArrayList<Person> searchGP(@NotNull GP input, int pageNo) { //returns person to allow for polymorphism in search results page
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -498,7 +499,7 @@ public class DataAccess {
         return count;
     }
 
-    public static boolean GPLogin(String Username, @NotNull String Password) {
+    public static boolean GPLogin(String Username, @NotNull String Password) { //checks if entered login details exist, if they do then stores details of logged in GP in program
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -567,7 +568,7 @@ public class DataAccess {
         return pic;
     }
 
-    public static GP getPrevGP(GP input){
+    public static GP getPrevGP(GP input){ //functions similarly to getPrevPatient
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -697,7 +698,7 @@ public class DataAccess {
         return mc;
     }
 
-    public static void loadMedCs() {
+    public static void loadMedCs() { //loads entire MedC database into program on startup to fill out dropdowns with
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -782,7 +783,7 @@ public class DataAccess {
         }
     }
 
-    public static ArrayList<CaseReport> searchCaseReport(int patientID, int GPID) {
+    public static ArrayList<CaseReport> searchCaseReport(int patientID, int GPID) { //can select by either patient or doctor
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -965,7 +966,7 @@ public class DataAccess {
         ArrayList<Medication> results = new ArrayList<>();
         try {
             conn = DataAccess.connect();
-            String query = "SELECT medname, startdate, duration, usagenotes, Enddate, casereportid from " +
+            String query = "SELECT medname, startdate, duration, usagenotes, Enddate, casereportid from " + //determines which meds are active using SQL to speed up function as fewer meds sent to java
                     "(SELECT *, startdate + interval '1' day * duration as Enddate from medication " +
                     "INNER JOIN casereports " +
                     "ON medication.casereportid = casereports.id " +
