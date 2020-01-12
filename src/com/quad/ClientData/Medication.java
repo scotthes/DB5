@@ -2,7 +2,6 @@ package com.quad.ClientData;
 
 import com.quad.DataAccess;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 

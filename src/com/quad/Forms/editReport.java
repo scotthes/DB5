@@ -8,10 +8,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,6 +50,7 @@ public class editReport extends JFrame{
         if (caseR.getCaseID() == 0){
             prevComButton.setVisible(false); //Do not display the previous comments button if it is a new report
             titleLabel.setText(String.format("New Case Report For %s" , Global.ActivePatient.getName()));
+            caseR.save();
         }
         else if(Global.ActivePatient.getID() == 0){
             setupForAdmin();
@@ -107,7 +105,12 @@ public class editReport extends JFrame{
         browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                        imageUpload();
+                try {
+                    imageUpload();
+                } catch (Exception e) {
+                    //exceptions occur when user cancels due to attempts to read/scale an image that is never selected,
+                    // this is not an issue so exceptions are ignored
+                }
             }
         });
 
@@ -121,12 +124,20 @@ public class editReport extends JFrame{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 saveCurrentMed();
+                caseR.loadMedications();
+                System.out.println(caseR.getMedSize());
+                crMeds.removeAllItems();
+                for(int i = 0; i < caseR.getMedSize(); i++){
+                    Medication med = caseR.getMed(i);
+                    crMeds.addItem(med.getName()) ;
+                }
                 medInput.setText("");
+                //crMeds.setSelectedIndex(0);
                 durationBox.setSelectedItem(0);
                 dayBox.setSelectedItem(0);
                 monthBox.setSelectedItem(0);
                 yearBox.setSelectedItem(0);
-                refresh();
+                //refresh();
             }
         });
         enlargeImageButton.addActionListener(new ActionListener() {
@@ -150,7 +161,9 @@ public class editReport extends JFrame{
         crMeds.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                fillMed(caseR.getMed(crMeds.getSelectedIndex()));
+                if (crMeds.getSelectedIndex()>=0) { //Selected index temporarily goes to -1 when adding a new medication, this check prevents that causing errors
+                    fillMed(caseR.getMed(crMeds.getSelectedIndex()));
+                }
             }
         });
     }
@@ -225,27 +238,15 @@ public class editReport extends JFrame{
         }
     }
 
-    private void imageUpload(){
+    private void imageUpload() throws Exception {
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File f = chooser.getSelectedFile();
-        try {
-            chosenImage = new FileInputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        chosenImage = new FileInputStream(f);
         String filename = f.getAbsolutePath();
         imageURL.setText(filename);
-        try {
-            image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(chosenImage))));
-        } catch (Exception e) {
-            e.getMessage();
-        }
-        try {
-            chosenImage = new FileInputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        image.setIcon(new ImageIcon(Global.scaleImage(ImageIO.read(chosenImage))));
+        chosenImage = new FileInputStream(f);
     }
 
     private void fillExisting(){
